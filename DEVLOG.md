@@ -1,4 +1,4 @@
-# 🚀 Project DevLog: SheetSight 
+# Project DevLog: SheetSight 
 
 **Internship Task:** Data Visualization using MERN Stack\
 **Developer:** Sijal Manandhar\
