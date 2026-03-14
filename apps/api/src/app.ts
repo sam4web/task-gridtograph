@@ -1,4 +1,5 @@
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import express, {
 	type Application,
 	type NextFunction,
@@ -7,12 +8,15 @@ import express, {
 } from "express";
 import helmet from "helmet";
 
+import corsOptions from "./config/cors-options";
+
 const app: Application = express();
 
 app.set("trust proxy", 1);
 
 // --- MIDDLEWARE SETUP ---
 app.use(helmet());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

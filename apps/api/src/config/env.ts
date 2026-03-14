@@ -16,11 +16,11 @@ const apiEnvSchema = z.object({
 		.int()
 		.positive('"PORT" must be a positive integer.'),
 
-	ENV: z.enum(["development", "production"], {
+	NODE_ENV: z.enum(["development", "production"], {
 		error: (issue) =>
 			issue.input === undefined
-				? '"ENV" is required.'
-				: '"ENV" must be "development" or "production".',
+				? '"NODE_ENV" is required.'
+				: '"NODE_ENV" must be "development" or "production".',
 	}),
 
 	ALLOWED_ORIGINS: z
