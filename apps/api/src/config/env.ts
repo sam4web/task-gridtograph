@@ -1,10 +1,11 @@
 import path from "node:path";
+import { enforceEnv } from "@repo/validators";
 import * as dotenv from "dotenv";
 import z from "zod";
 
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 
-const configSchema = z.object({
+const apiEnvSchema = z.object({
 	PORT: z.coerce
 		.number({
 			error: (issue) =>
@@ -63,17 +64,4 @@ const configSchema = z.object({
 		),
 });
 
-const config = (() => {
-	try {
-		return configSchema.parse(process.env);
-	} catch (error) {
-		if (error instanceof z.ZodError) {
-			throw new Error(
-				'Environment variable validation failed. Please check your ".env" files.',
-			);
-		}
-		throw error;
-	}
-})();
-
-export default config;
+export const env = enforceEnv(apiEnvSchema, process.env);

@@ -23,7 +23,8 @@
 		"uuid": "^13.0.0",
 		"winston": "^3.19.0",
 		"zod": "catalog:",
-		"date-fns": "catalog:"
+		"date-fns": "catalog:",
+		"@repo/validators": "workspace:*"
 	},
 	"devDependencies": {
 		"@repo/types": "workspace:*",

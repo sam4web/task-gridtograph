@@ -1,13 +1,13 @@
 import { disableReactDevTools } from "@fvilers/disable-react-devtools";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
 
-import config from "~/config";
+import { env } from "~/config/env";
 import { routeTree } from "~/routeTree.gen";
 import "~/index.css";
 
-if (config.VITE_ENV === "production") {
+if (env.VITE_ENV === "production") {
 	disableReactDevTools();
 }
 
