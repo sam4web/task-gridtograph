@@ -1,5 +1,5 @@
 {
-	"name": "project-sheetsight",
+	"name": "task-gridtograph",
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
