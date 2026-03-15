@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { db, sql } from "@repo/database";
 import app from "./app";
 import { env } from "./config/env";
 
@@ -20,6 +21,9 @@ const bootstrap = async () => {
 		handleProcessEvents();
 
 		// --- Database Connection ---
+		console.info("Attempting to connect to database...");
+		await db.execute(sql`SELECT 1`);
+		console.info("Database connection established.");
 
 		// --- Start HTTP Server ---
 		server.listen(env.PORT, () => {

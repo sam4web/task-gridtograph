@@ -3,12 +3,13 @@
 	"private": true,
 	"version": "0.0.0",
 	"scripts": {
-		"start": "node ./dist/backend/src/server.js",
+		"start": "dotenv -e .env -- node ./dist/index.js",
 		"build": "rm -rf ./dist & tsc --build ",
-		"dev": "npx nodemon",
+		"dev": "dotenv -e .env -- npx nodemon",
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@repo/database": "workspace:*",
 		"@repo/validators": "workspace:*",
 		"bcrypt": "^6.0.0",
 		"cookie-parser": "^1.4.7",
@@ -29,6 +30,7 @@
 	"devDependencies": {
 		"@repo/types": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
+		"dotenv-cli": "catalog:",
 		"@types/bcrypt": "^6.0.0",
 		"@types/cookie-parser": "^1.4.10",
 		"@types/cors": "^2.8.19",

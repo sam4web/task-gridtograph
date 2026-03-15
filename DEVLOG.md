@@ -1,7 +1,6 @@
 # Project DevLog: GridToGraph 
 
 **Internship Task:** Data Visualization using MERN Stack\
-**Developer:** Sijal Manandhar\
 **Tech Stack:** React, Node.js, MongoDB, PostgreSQL, Turborepo
 
 ---
