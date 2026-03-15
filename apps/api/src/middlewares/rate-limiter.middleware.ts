@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-import { env } from "../config/env";
+import { env } from "../config";
 
 export const publicApiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,

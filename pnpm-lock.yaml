@@ -9,6 +9,12 @@ catalogs:
     '@types/node':
       specifier: ^25.5.0
       version: 25.5.0
+    date-fns:
+      specifier: ^4.1.0
+      version: 4.1.0
+    dotenv-cli:
+      specifier: ^11.0.0
+      version: 11.0.0
     typescript:
       specifier: 5.9.2
       version: 5.9.2
@@ -48,6 +54,9 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@repo/validators':
         specifier: workspace:*
         version: link:../../packages/validators
@@ -97,9 +106,6 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -130,6 +136,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.0
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 11.0.0
       nodemon:
         specifier: ^3.1.14
         version: 3.1.14
@@ -145,6 +154,9 @@ importers:
       '@fvilers/disable-react-devtools':
         specifier: ^1.3.0
         version: 1.3.0
+      '@repo/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@repo/validators':
         specifier: workspace:*
         version: link:../../packages/validators
@@ -173,9 +185,6 @@ importers:
         specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
-      '@repo/types':
-        specifier: workspace:*
-        version: link:../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -222,6 +231,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.5.0
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 11.0.0
       drizzle-kit:
         specifier: ^0.31.9
         version: 0.31.9
@@ -229,7 +241,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  packages/types: {}
+  packages/shared: {}
 
   packages/typescript-config: {}
 
@@ -3380,10 +3392,6 @@ snapshots:
     dependencies:
       ms: 2.0.0
 
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.3(supports-color@5.5.0):
     dependencies:
       ms: 2.1.3
@@ -3457,7 +3465,7 @@ snapshots:
 
   esbuild-register@3.6.0(esbuild@0.25.12):
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.3(supports-color@5.5.0)
       esbuild: 0.25.12
     transitivePeerDependencies:
       - supports-color

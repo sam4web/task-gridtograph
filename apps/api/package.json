@@ -11,6 +11,7 @@
 	"dependencies": {
 		"@repo/database": "workspace:*",
 		"@repo/validators": "workspace:*",
+		"@repo/shared": "workspace:*",
 		"bcrypt": "^6.0.0",
 		"cookie-parser": "^1.4.7",
 		"cors": "^2.8.6",
@@ -28,7 +29,6 @@
 		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"@repo/types": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"dotenv-cli": "catalog:",
 		"@types/bcrypt": "^6.0.0",

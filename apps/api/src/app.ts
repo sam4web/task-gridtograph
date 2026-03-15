@@ -7,9 +7,11 @@ import express, {
 	type Response,
 } from "express";
 import helmet from "helmet";
+import morgan from "morgan";
 
-import corsOptions from "./config/cors-options";
-import { publicApiLimiter } from "./middlewares";
+import { corsOptions, logger } from "./config";
+import { ApiError } from "./lib";
+import { errorHandler, publicApiLimiter } from "./middlewares";
 import { authRouter } from "./modules/auth/auth.route";
 
 const app: Application = express();
@@ -23,6 +25,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(publicApiLimiter);
+
+// ERROR: not logging req
+app.use(
+	morgan("tiny", {
+		stream: {
+			write: (message: string) => logger.info(message.trim()),
+		},
+	}),
+);
 
 // --- API ROUTES ---
 // health check endpoint
@@ -41,8 +52,10 @@ app.use(authRouter);
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)
 app.use((req: Request, res: Response, next: NextFunction) => {
-	res.json({ message: "Not Found" });
-	return;
+	next(ApiError.notFound(`Route not found: ${req.originalUrl}`));
 });
+
+// pass any unhandled errors to the error handler
+app.use(errorHandler);
 
 export default app;

@@ -19,10 +19,10 @@
 		"tailwindcss": "^4.2.1",
 		"zod": "catalog:",
 		"date-fns": "catalog:",
+		"@repo/shared": "workspace:*",
 		"@repo/validators": "workspace:*"
 	},
 	"devDependencies": {
-		"@repo/types": "workspace:*",
 		"@repo/typescript-config": "workspace:*",
 		"@tanstack/router-plugin": "^1.166.9",
 		"@types/react": "^19.2.14",

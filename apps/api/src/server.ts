@@ -1,17 +1,21 @@
 import { createServer } from "node:http";
 import { db, sql } from "@repo/database";
 import app from "./app";
-import { env } from "./config/env";
+import { env, logger } from "./config";
 
 const server = createServer(app);
 
 const handleProcessEvents = () => {
 	process.on("uncaughtException", (error: Error) => {
-		console.error(`Uncaught Exception: ${error.message}`);
+		logger.error(`Uncaught Exception: ${error.message}`, {
+			stack: error.stack,
+		});
 		process.exit(1);
 	});
-	process.on("unhandledRejection", (reason: Error) => {
-		console.error(`Unhandled Rejection:: ${reason.message}`);
+	process.on("unhandledRejection", (reason: Error | any) => {
+		logger.error(`Unhandled Rejection: ${reason.message || reason}`, {
+			stack: reason.stack,
+		});
 		process.exit(1);
 	});
 };
@@ -21,18 +25,18 @@ const bootstrap = async () => {
 		handleProcessEvents();
 
 		// --- Database Connection ---
-		console.info("Attempting to connect to database...");
+		logger.info("Attempting to connect to database...");
 		await db.execute(sql`SELECT 1`);
-		console.info("Database connection established.");
+		logger.info("Database connection established.");
 
 		// --- Start HTTP Server ---
 		server.listen(env.PORT, () => {
-			console.log(
+			logger.info(
 				`Server listening on port ${env.PORT} in ${env.NODE_ENV} mode.`,
 			);
 		});
 	} catch (error) {
-		console.error("Failed to start server:", error);
+		logger.error("Failed to start server:", error);
 		process.exit(1);
 	}
 };

@@ -17,7 +17,7 @@ const dynamicOriginCheck = (
 	}
 };
 
-const corsOptions: cors.CorsOptions = {
+export const corsOptions: cors.CorsOptions = {
 	origin: dynamicOriginCheck,
 	methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 	allowedHeaders: [
@@ -30,5 +30,3 @@ const corsOptions: cors.CorsOptions = {
 	credentials: true,
 	optionsSuccessStatus: 204,
 };
-
-export default corsOptions;
