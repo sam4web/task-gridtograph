@@ -12,7 +12,7 @@ import morgan from "morgan";
 import { corsOptions, logger } from "./config";
 import { ApiError } from "./lib";
 import { errorHandler, publicApiLimiter } from "./middlewares";
-import { authRouter } from "./modules/auth/auth.route";
+import { authRouter } from "./modules/auth";
 
 const app: Application = express();
 
@@ -25,8 +25,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(publicApiLimiter);
-
-// ERROR: not logging req
 app.use(
   morgan("tiny", {
     stream: {
@@ -47,7 +45,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // register module routes
-app.use(authRouter);
+app.use("/api/auth", authRouter);
 
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)
