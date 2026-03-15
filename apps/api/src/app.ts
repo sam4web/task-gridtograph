@@ -9,6 +9,8 @@ import express, {
 import helmet from "helmet";
 
 import corsOptions from "./config/cors-options";
+import { publicApiLimiter } from "./middlewares";
+import { authRouter } from "./modules/auth/auth.route";
 
 const app: Application = express();
 
@@ -20,6 +22,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(publicApiLimiter);
 
 // --- API ROUTES ---
 // health check endpoint
@@ -33,6 +36,7 @@ app.get("/health", (req: Request, res: Response) => {
 });
 
 // register module routes
+app.use(authRouter);
 
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)
