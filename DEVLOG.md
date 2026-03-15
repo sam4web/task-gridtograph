@@ -10,7 +10,7 @@
 | Phase | Status | Key Milestones |
 | :--- | :--- | :--- |
 | **Phase 1: Architecture** | Completed | Turborepo setup, Biome, TypeScript configs |
-| **Phase 2: Authentication** | In Progress | Admin Login system, JWT, Postgres/Sequelize integration |
+| **Phase 2: Authentication** | In Progress | Admin Login system, JWT, Postgres integration |
 | **Phase 3: Data Management** | Pending | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
 | **Phase 4: Sales Dashboard** | Pending | Product Table, Bar Chart (Qty), Pie Chart (Revenue) |
 | **Phase 5: Dynamic Sync** | Pending | Real-time Chart updates on CRUD operations |
@@ -19,19 +19,30 @@
 
 ## Daily Log
 
-### [2026-05-14] | Day 1: Monorepo Foundation & Workspace Setup
-**Focus:** Workspace architecture and cross-package synchronization.
+### [2026-05-14] | Day 1: Monorepo Foundation
+**Focus:** Architecture and cross-package synchronization.
 
 **Tasks Completed**
-* **Architecture:** Initialized **Turborepo** monorepo to manage `apps/web` and `apps/api`.
-* **Tooling:** Set up **Biome** for linting/formatting and **pnpm catalogs** for unified dependency versions.
-* **Shared Logic:** Created a **shared-validators** package featuring `enforceEnv`, a Zod-based utility to strictly validate environment variables.
-* **Frontend (Web):** Scaffolded **Vite + React** with **Tailwind CSS** and **TanStack Router**.
-* **Backend (API):** Node.js server setup with **Zod** `.env` validation and dynamic **CORS** origin checks.
+* **Monorepo:** Created **Turborepo** for `web` and `api` using **pnpm catalogs**.
+* **Tooling:** Set up **Biome** for linting and **Vite + React** for the frontend.
+* **Validation:** Built a shared **validators** package with a Zod-based `enforceEnv` utility.
+* **Backend:** Initialized Node.js server with strict `.env` and **CORS** validation.
 
-**Technical Strategy & Decisions**
-* **Decision:** Implemented a Monorepo with a **shared-validators** package.
-* **Reasoning:** Centralizing Zod schemas prevents code duplication and ensures absolute data consistency between the API and UI.
-* **Benefit:** The `enforceEnv` utility creates a "fail-fast" system, ensuring the app crashes with clear logs if configurations are invalid, while **pnpm catalogs** eliminate version mismatch errors.
+**Insights**
+* **Strategy:** Using shared Zod validators ensures data types remain synced across the entire stack.
+* **Impact:** `enforceEnv` creates a "fail-fast" system, preventing runtime errors caused by missing configurations.
 
 ---
+
+### [2026-05-15] | Day 2: Database & Infrastructure
+**Focus:** Data layer, error handling, and observability.
+
+**Tasks Completed**
+* **Database:** Set up **PostgreSQL** with **Drizzle ORM**; defined `users` and `otp` schemas.
+* **Security & Constants:** Integrated a **Rate Limiter** and a shared package for global constants.
+* **Observability:** Combined **Morgan** and **Winston** for structured request/app logging.
+* **Error Handling:** Built a global `ApiError` class and middleware for uniform JSON responses.
+
+**Insights**
+* **Strategy:** Chose **Drizzle ORM** for its "TypeScript-first" safety and low runtime overhead.
+* **Impact:** Centralized logging and error handling provide predictable API failures and faster debugging.
