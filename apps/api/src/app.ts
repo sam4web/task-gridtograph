@@ -1,10 +1,10 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
-	type Application,
-	type NextFunction,
-	type Request,
-	type Response,
+  type Application,
+  type NextFunction,
+  type Request,
+  type Response,
 } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -28,22 +28,22 @@ app.use(publicApiLimiter);
 
 // ERROR: not logging req
 app.use(
-	morgan("tiny", {
-		stream: {
-			write: (message: string) => logger.info(message.trim()),
-		},
-	}),
+  morgan("tiny", {
+    stream: {
+      write: (message: string) => logger.info(message.trim()),
+    },
+  }),
 );
 
 // --- API ROUTES ---
 // health check endpoint
 app.get("/health", (req: Request, res: Response) => {
-	res.status(200).json({
-		success: true,
-		message: "Server is healthy!",
-		uptime: process.uptime(),
-		timestamp: new Date().toISOString(),
-	});
+  res.status(200).json({
+    success: true,
+    message: "Server is healthy!",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // register module routes
@@ -52,7 +52,7 @@ app.use(authRouter);
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)
 app.use((req: Request, res: Response, next: NextFunction) => {
-	next(ApiError.notFound(`Route not found: ${req.originalUrl}`));
+  next(ApiError.notFound(`Route not found: ${req.originalUrl}`));
 });
 
 // pass any unhandled errors to the error handler

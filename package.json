@@ -1,27 +1,27 @@
 {
-	"name": "task-gridtograph",
-	"private": true,
-	"scripts": {
-		"build": "turbo run build",
-		"dev": "turbo run dev",
-		"format": "pnpm biome format . --write",
-		"format:check": "pnpm biome format .",
-		"lint": "pnpm biome lint .",
-		"check": "pnpm biome check --apply ."
-	},
-	"dependencies": {
-		"@types/node": "^25.5.0",
-		"date-fns": "^4.1.0",
-		"zod": "^4.3.6"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.4.7",
-		"dotenv-cli": "^11.0.0",
-		"turbo": "^2.8.17",
-		"typescript": "5.9.2"
-	},
-	"packageManager": "pnpm@10.32.1",
-	"engines": {
-		"node": ">=18"
-	}
+  "name": "task-gridtograph",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "format": "pnpm biome format . --write",
+    "format:check": "pnpm biome format .",
+    "lint": "pnpm biome lint .",
+    "check": "pnpm biome check --apply ."
+  },
+  "dependencies": {
+    "@types/node": "^25.5.0",
+    "date-fns": "^4.1.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.7",
+    "dotenv-cli": "^11.0.0",
+    "turbo": "^2.8.17",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "engines": {
+    "node": ">=18"
+  }
 }

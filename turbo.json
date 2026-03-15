@@ -1,23 +1,23 @@
 {
-	"$schema": "https://turborepo.dev/schema.json",
-	"ui": "tui",
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["dist/**", "build/**"]
-		},
-		"check-types": {
-			"dependsOn": ["^check-types"],
-			"cache": true
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		},
-		"db:push": {
-			"cache": false,
-			"inputs": ["./src/schema/postgres.ts"]
-		}
-	}
+  "$schema": "https://turborepo.dev/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["dist/**", "build/**"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"],
+      "cache": true
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:push": {
+      "cache": false,
+      "inputs": ["./src/schema/postgres.ts"]
+    }
+  }
 }

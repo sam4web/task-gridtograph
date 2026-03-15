@@ -3,7 +3,7 @@ import { type SubmitEvent, useId, useState } from "react";
 import { env } from "~/config/env";
 
 export const Route = createFileRoute("/auth")({
-	component: AuthComponent,
+  component: AuthComponent,
 });
 
 // TODO:
@@ -13,56 +13,56 @@ export const Route = createFileRoute("/auth")({
 // * Create _auth pathless layout route
 
 function AuthComponent() {
-	const emailFieldId = useId();
-	const passwordFieldId = useId();
+  const emailFieldId = useId();
+  const passwordFieldId = useId();
 
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-	const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		console.log(email, password);
-		try {
-			await fetch(`${env.VITE_API_BASE_URL}/login`, {
-				method: "POST",
-				body: JSON.stringify({ email, password }),
-				headers: {
-					"Content-Type": "Application/json; charset=UTF-8",
-				},
-			});
-		} catch (err) {
-			console.log(err);
-		}
-	};
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(email, password);
+    try {
+      await fetch(`${env.VITE_API_BASE_URL}/login`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+        headers: {
+          "Content-Type": "Application/json; charset=UTF-8",
+        },
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-	return (
-		<div>
-			<h1>Login + Register Page</h1>
-			<form onSubmit={handleSubmit}>
-				<div>
-					<label htmlFor={emailFieldId}>Email</label>
-					<input
-						id={emailFieldId}
-						name="email"
-						type="email"
-						className="border"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-				</div>
-				<div>
-					<label htmlFor={passwordFieldId}>Password</label>
-					<input
-						id={passwordFieldId}
-						name="password"
-						type="password"
-						className="border"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</div>
-				<button type="submit">Submit</button>
-			</form>
-		</div>
-	);
+  return (
+    <div>
+      <h1>Login + Register Page</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor={emailFieldId}>Email</label>
+          <input
+            id={emailFieldId}
+            name="email"
+            type="email"
+            className="border"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor={passwordFieldId}>Password</label>
+          <input
+            id={passwordFieldId}
+            name="password"
+            type="password"
+            className="border"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  );
 }
