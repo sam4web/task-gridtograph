@@ -241,7 +241,11 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  packages/shared: {}
+  packages/shared:
+    dependencies:
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../database
 
   packages/typescript-config: {}
 

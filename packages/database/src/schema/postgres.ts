@@ -27,3 +27,6 @@ export const otps = pgTable("otps", {
   expiresAt: timestamp("expires_at").notNull(),
   consumed: boolean("consumed").default(false),
 });
+
+export type InsertUser = typeof users.$inferInsert;
+export type SelectUser = typeof users.$inferSelect;

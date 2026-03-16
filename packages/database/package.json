@@ -1,11 +1,10 @@
 {
   "name": "@repo/database",
   "version": "0.0.0",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./mongo": "./src/mongodb.ts"
+    "./postgres": "./src/postgresql.ts",
+    "./mongo": "./src/mongodb.ts",
+    "./error": "./src/error.ts"
   },
   "private": true,
   "scripts": {

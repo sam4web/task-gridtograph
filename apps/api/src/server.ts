@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { db, sql } from "@repo/database";
+import { db, sql } from "@repo/database/postgres";
 import app from "./app";
 import { env, logger } from "./config";
 

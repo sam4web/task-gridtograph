@@ -22,16 +22,16 @@ function AuthComponent() {
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(email, password);
-    try {
-      await fetch(`${env.VITE_API_BASE_URL}/login`, {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "Application/json; charset=UTF-8",
-        },
-      });
-    } catch (err) {
-      console.log(err);
+    const res = await fetch(`${env.VITE_API_BASE_URL}/api/auth/logindf`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "Application/json; charset=UTF-8",
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log(data);
     }
   };
 

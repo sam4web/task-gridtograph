@@ -1,5 +1,6 @@
+import { RecordNotFoundError } from "@repo/database/error";
+import { HTTP_STATUS } from "@repo/shared";
 import type { Request, Response } from "express";
-
 import { logger } from "../config";
 import { ApiError } from "../lib";
 
@@ -18,6 +19,17 @@ export const errorHandler = (
       message: error.message,
     });
     return;
+  }
+
+  if (error instanceof RecordNotFoundError) {
+    logger.warn(`Database Error: ${error.message}`, {
+      path: request.path,
+      status: HTTP_STATUS.NOT_FOUND,
+    });
+    response.status(HTTP_STATUS.NOT_FOUND).json({
+      success: false,
+      message: error.message,
+    });
   }
 
   logger.error(`Internal Server Error: ${error.message}`, {
