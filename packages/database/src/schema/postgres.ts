@@ -12,11 +12,14 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   email: text("email").notNull().unique(),
   password: text("password").notNull(), // hashed password
-  fullName: text("full_name").notNull(),
   isVerified: boolean("is_verified").default(false).notNull(),
 
   // audit fields
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .notNull()
+    .$onUpdate(() => new Date()),
   lastLogin: timestamp("last_login"),
 });
 
