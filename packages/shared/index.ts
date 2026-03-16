@@ -1,2 +1,2 @@
 export * from "./constants";
-export * from "./types/user";
+export * from "./schema";

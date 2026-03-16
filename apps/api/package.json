@@ -10,9 +10,8 @@
   },
   "dependencies": {
     "@repo/database": "workspace:*",
-    "@repo/validators": "workspace:*",
     "@repo/shared": "workspace:*",
-    "bcrypt": "^6.0.0",
+    "@repo/validators": "workspace:*",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "date-fns": "catalog:",
@@ -26,12 +25,11 @@
     "ms": "^2.1.3",
     "uuid": "^13.0.0",
     "winston": "^3.19.0",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "bcryptjs": "catalog:"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "dotenv-cli": "catalog:",
-    "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
@@ -40,6 +38,7 @@
     "@types/morgan": "^1.9.10",
     "@types/ms": "^2.1.0",
     "@types/node": "catalog:",
+    "dotenv-cli": "catalog:",
     "nodemon": "^3.1.14",
     "tsx": "^4.21.0",
     "typescript": "catalog:"

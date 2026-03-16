@@ -5,6 +5,7 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "dependencies": {
-    "@repo/database": "workspace:*"
+    "@repo/database": "workspace:*",
+    "zod": "catalog:"
   }
 }

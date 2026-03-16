@@ -4,7 +4,8 @@
   "exports": {
     "./postgres": "./src/postgresql.ts",
     "./mongo": "./src/mongodb.ts",
-    "./error": "./src/error.ts"
+    "./error": "./src/error.ts",
+    "./repositories": "./src/repositories/index.ts"
   },
   "private": true,
   "scripts": {
@@ -14,7 +15,8 @@
     "@repo/validators": "workspace:*",
     "drizzle-orm": "^0.45.1",
     "postgres": "^3.4.8",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "bcryptjs": "catalog:"
   },
   "devDependencies": {
     "dotenv-cli": "catalog:",

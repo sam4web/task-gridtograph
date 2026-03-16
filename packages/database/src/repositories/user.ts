@@ -1,13 +1,15 @@
+import bcrypt from "bcryptjs";
+
 import { DatabaseError, RecordNotFoundError } from "../error";
 import { db, eq, users } from "../postgresql";
 import type { InsertUser, SelectUser } from "../schema/postgres";
 
 export type IUserRepository = {
   getAll(): Promise<SelectUser[]>;
-  create(userData: InsertUser): Promise<SelectUser>;
+  create(data: InsertUser): Promise<SelectUser>;
   findById(id: string): Promise<SelectUser | null>;
   findByEmail(email: string): Promise<SelectUser | null>;
-  update(id: string, updatedData: InsertUser): Promise<SelectUser | null>;
+  update(id: string, data: InsertUser): Promise<SelectUser | null>;
   delete(id: string): Promise<boolean>;
 };
 
@@ -23,9 +25,18 @@ export class UserRepository implements IUserRepository {
 
   public async create(data: InsertUser): Promise<SelectUser> {
     try {
-      const result = await db.insert(users).values(data).returning();
-      return result[0];
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(data.password, salt);
+      const [result] = await db
+        .insert(users)
+        .values({ ...data, password: hashedPassword })
+        .returning();
+      if (!result) {
+        throw new DatabaseError("Failed to create user.");
+      }
+      return result;
     } catch (error) {
+      if (error instanceof DatabaseError) throw error;
       throw new DatabaseError("Failed to create new user.", error);
     }
   }
@@ -65,15 +76,15 @@ export class UserRepository implements IUserRepository {
     data: Partial<InsertUser>,
   ): Promise<SelectUser> {
     try {
-      const updatedRows = await db
+      const [result] = await db
         .update(users)
         .set(data)
         .where(eq(users.id, id))
         .returning();
-      if (updatedRows.length === 0) {
+      if (!result) {
         throw new RecordNotFoundError("User", id);
       }
-      return updatedRows[0];
+      return result;
     } catch (error) {
       if (error instanceof RecordNotFoundError) throw error;
       throw new DatabaseError("Failed to update user.", error);
