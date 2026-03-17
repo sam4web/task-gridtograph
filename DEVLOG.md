@@ -46,3 +46,17 @@
 **Insights**
 * **Strategy:** Chose **Drizzle ORM** for its "TypeScript-first" safety and low runtime overhead.
 * **Impact:** Centralized logging and error handling provide predictable API failures and faster debugging.
+* 
+---
+
+### [2026-05-17] | Day 3: Authentication System
+**Focus:** User data layer and secure API authentication.
+
+**Tasks Completed**
+* **Data Access:** Built a **User Repository** for PostgreSQL CRUD operations.
+* **JWT & Auth:** Set up **JSON Web Tokens** and dedicated Auth routes.
+* **API Structure:** Developed **Controllers** and **Services** to separate business logic from routing.
+
+**Insights**
+* **Strategy:** Decoupling the Repository from the Service layer ensures database logic remains modular and testable.
+* **Impact:** Clean JWT-based architecture provides a scalable foundation for protecting admin routes.
