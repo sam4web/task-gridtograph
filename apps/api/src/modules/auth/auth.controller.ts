@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import ms from "ms";
 
 import { env } from "../../config";
+import { ApiResponse } from "../../lib";
 import { authService } from "./auth.service";
 import type { LoginUserReq, RegisterUserReq } from "./auth.types";
 
@@ -18,8 +19,15 @@ class AuthController {
         sameSite: env.NODE_ENV === "development" ? "strict" : "none",
         secure: env.NODE_ENV === "production",
       });
-      res.status(HTTP_STATUS.OK).json(accessToken);
-      return;
+      return res
+        .status(HTTP_STATUS.OK)
+        .json(
+          new ApiResponse(
+            HTTP_STATUS.OK,
+            "User logged in successfully.",
+            accessToken,
+          ),
+        );
     } catch (err) {
       next(err);
     }
@@ -36,8 +44,15 @@ class AuthController {
         sameSite: env.NODE_ENV === "development" ? "strict" : "none",
         secure: env.NODE_ENV === "production",
       });
-      res.status(HTTP_STATUS.OK).json(accessToken);
-      return;
+      return res
+        .status(HTTP_STATUS.CREATED)
+        .json(
+          new ApiResponse(
+            HTTP_STATUS.CREATED,
+            "User registerd successfully.",
+            accessToken,
+          ),
+        );
     } catch (err) {
       next(err);
     }
@@ -50,9 +65,7 @@ class AuthController {
         sameSite: env.NODE_ENV === "development" ? "strict" : "none",
         secure: env.NODE_ENV === "production",
       });
-      res.status(HTTP_STATUS.NO_CONTENT);
-      res.end();
-      return;
+      return res.status(HTTP_STATUS.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }

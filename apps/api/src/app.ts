@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from "@repo/shared";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, {
@@ -8,9 +9,8 @@ import express, {
 } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-
 import { corsOptions, logger } from "./config";
-import { ApiError } from "./lib";
+import { ApiError, ApiResponse } from "./lib";
 import { errorHandler, publicApiLimiter } from "./middlewares";
 import { authRouter } from "./modules/auth";
 
@@ -36,9 +36,8 @@ app.use(
 // --- API ROUTES ---
 // health check endpoint
 app.get("/health", (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Server is healthy!",
+  return res.status(HTTP_STATUS.OK).json({
+    ...new ApiResponse(HTTP_STATUS.OK, "Server is healthy!"),
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
   });
