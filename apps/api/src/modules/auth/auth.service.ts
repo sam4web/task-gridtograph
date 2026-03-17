@@ -22,7 +22,7 @@ class AuthService {
     email,
     password,
   }: LoginUserDTO): Promise<IAuthResponse> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.existsByEmail(email);
     if (!user) {
       throw ApiError.conflict("User with provided email does not exists.");
     }
@@ -48,7 +48,7 @@ class AuthService {
     email,
     password,
   }: RegisterUserDTO): Promise<IAuthResponse> {
-    const existingUser = await this.userRepository.findByEmail(email);
+    const existingUser = await this.userRepository.existsByEmail(email);
     if (existingUser) {
       throw ApiError.conflict("An account with this email already exists.");
     }

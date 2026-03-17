@@ -8,6 +8,7 @@ export type IUserRepository = {
   getAll(): Promise<SelectUser[]>;
   create(data: InsertUser): Promise<SelectUser>;
   findById(id: string): Promise<SelectUser | null>;
+  existsByEmail(email: string): Promise<SelectUser | null>;
   findByEmail(email: string): Promise<SelectUser | null>;
   update(id: string, data: InsertUser): Promise<SelectUser | null>;
   delete(id: string): Promise<boolean>;
@@ -56,15 +57,24 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  public async findByEmail(email: string): Promise<SelectUser> {
+  public async existsByEmail(email: string): Promise<SelectUser | null> {
     try {
       const result = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.email, email),
       });
-      if (!result) {
+      return result ?? null;
+    } catch (error) {
+      throw new DatabaseError("Failed to check user.", error);
+    }
+  }
+
+  public async findByEmail(email: string): Promise<SelectUser> {
+    try {
+      const user = await this.existsByEmail(email);
+      if (!user) {
         throw new RecordNotFoundError("User", email);
       }
-      return result;
+      return user;
     } catch (error) {
       if (error instanceof RecordNotFoundError) throw error;
       throw new DatabaseError("Failed to fetch user.", error);
