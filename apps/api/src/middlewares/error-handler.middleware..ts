@@ -30,6 +30,7 @@ export const errorHandler = (
       success: false,
       message: error.message,
     });
+    return;
   }
 
   logger.error(`Internal Server Error: ${error.message}`, {
