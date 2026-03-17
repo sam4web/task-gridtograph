@@ -18,3 +18,4 @@ authRouter.post(
   validateRequest(authSchema, "body"),
   authController.register,
 );
+authRouter.post("/logout", authController.logout);

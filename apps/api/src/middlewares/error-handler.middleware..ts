@@ -1,46 +1,47 @@
 import { RecordNotFoundError } from "@repo/database/error";
 import { HTTP_STATUS } from "@repo/shared";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { logger } from "../config";
-import { ApiError } from "../lib";
+import { ApiError, ApiResponse } from "../lib";
 
 export const errorHandler = (
   error: Error,
-  request: Request,
-  response: Response,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   if (error instanceof ApiError) {
     logger.warn(`API Error: ${error.message}`, {
-      path: request.path,
+      path: req.path,
       status: error.statusCode,
     });
-    response.status(error.statusCode).json({
-      success: false,
-      message: error.message,
-    });
-    return;
+    return res
+      .status(error.statusCode)
+      .json(new ApiResponse(error.statusCode, error.message));
   }
 
   if (error instanceof RecordNotFoundError) {
     logger.warn(`Database Error: ${error.message}`, {
-      path: request.path,
+      path: req.path,
       status: HTTP_STATUS.NOT_FOUND,
     });
-    response.status(HTTP_STATUS.NOT_FOUND).json({
-      success: false,
-      message: error.message,
-    });
-    return;
+    return res
+      .status(HTTP_STATUS.NOT_FOUND)
+      .json(new ApiResponse(HTTP_STATUS.NOT_FOUND, error.message));
   }
 
   logger.error(`Internal Server Error: ${error.message}`, {
-    path: request.path,
-    method: request.method,
+    path: req.path,
+    method: req.method,
     stack: error.stack,
   });
 
-  response.status(500).json({
-    success: false,
-    message: "An unexpected error occurred. Please try again later.",
-  });
+  return res
+    .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+    .json(
+      new ApiResponse(
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+        "An unexpected error occurred. Please try again later.",
+      ),
+    );
 };
