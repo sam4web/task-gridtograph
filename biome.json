@@ -5,6 +5,7 @@
     "clientKind": "git",
     "useIgnoreFile": false
   },
+
   "files": {
     "ignoreUnknown": false,
     "includes": [
@@ -15,16 +16,24 @@
       "!**/.turbo"
     ]
   },
+
   "formatter": {
     "enabled": true,
     "indentStyle": "space",
-    "indentWidth": 2
+    "indentWidth": 2,
+    "formatWithErrors": true
   },
   "assist": {
     "actions": {
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true,
+      "allowWrongLineComments": true
     }
   },
   "linter": {
@@ -39,6 +48,12 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": true
     }
   }
 }

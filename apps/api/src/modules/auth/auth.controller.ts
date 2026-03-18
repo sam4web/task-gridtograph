@@ -19,13 +19,11 @@ class AuthController {
         sameSite: env.NODE_ENV === "development" ? "strict" : "none",
         secure: env.NODE_ENV === "production",
       });
-      return res
-        .status(HTTP_STATUS.OK)
-        .json(
-          new ApiResponse(HTTP_STATUS.OK, "User logged in successfully.", {
-            token: accessToken,
-          }),
-        );
+      return res.status(HTTP_STATUS.OK).json(
+        new ApiResponse(HTTP_STATUS.OK, "User logged in successfully.", {
+          token: accessToken,
+        }),
+      );
     } catch (err) {
       next(err);
     }
@@ -42,13 +40,11 @@ class AuthController {
         sameSite: env.NODE_ENV === "development" ? "strict" : "none",
         secure: env.NODE_ENV === "production",
       });
-      return res
-        .status(HTTP_STATUS.CREATED)
-        .json(
-          new ApiResponse(HTTP_STATUS.CREATED, "User registerd successfully.", {
-            token: accessToken,
-          }),
-        );
+      return res.status(HTTP_STATUS.CREATED).json(
+        new ApiResponse(HTTP_STATUS.CREATED, "User registerd successfully.", {
+          token: accessToken,
+        }),
+      );
     } catch (err) {
       next(err);
     }
