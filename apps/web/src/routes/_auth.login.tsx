@@ -1,7 +1,9 @@
 import { loginSchema } from "@repo/shared";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -19,12 +21,15 @@ import {
   FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import { useLogin } from "~/hooks/use-auth";
 
 export const Route = createFileRoute("/_auth/login")({
   component: LoginRouteComponent,
 });
 
 export function LoginRouteComponent() {
+  const { mutateAsync, error: apiError, isPending } = useLogin();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -34,15 +39,10 @@ export function LoginRouteComponent() {
       onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
-      const promise = () =>
-        new Promise((resolve) =>
-          setTimeout(() => resolve({ name: "Sonner" }), 2000),
-        );
-      toast.promise(promise, {
+      toast.promise(mutateAsync(value), {
         loading: "Logging in...",
         success: "Successfully logged in.",
-        error: "Error",
+        error: (err) => err.message || "Registration failed",
       });
     },
   });
@@ -55,10 +55,20 @@ export function LoginRouteComponent() {
           Enter your email below to login to your account
         </CardDescription>
       </CardHeader>
+
       <CardContent>
+        {apiError && (
+          <Alert variant="destructive" className="mb-5">
+            <AlertCircle className="size-4" />
+            <AlertTitle>Login Failed</AlertTitle>
+            <AlertDescription>{apiError.message}</AlertDescription>
+          </Alert>
+        )}
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             form.handleSubmit();
           }}
         >
@@ -112,8 +122,13 @@ export function LoginRouteComponent() {
                 );
               }}
             />
+
             <Field>
-              <Button type="submit">Login</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isPending ? "Processing..." : "Login"}
+              </Button>
+
               <FieldDescription className="text-center">
                 Don't have an account? <Link to="/register">Sign up</Link>
               </FieldDescription>

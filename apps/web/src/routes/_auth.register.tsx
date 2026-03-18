@@ -1,7 +1,9 @@
 import { registerSchema } from "@repo/shared";
 import { useForm } from "@tanstack/react-form";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 
 import { Button } from "~/components/ui/button";
 import {
@@ -19,12 +21,15 @@ import {
   FieldLabel,
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
+import { useRegister } from "~/hooks/use-auth";
 
 export const Route = createFileRoute("/_auth/register")({
   component: RegisterRouteComponent,
 });
 
 export function RegisterRouteComponent() {
+  const { mutateAsync, error: apiError, isPending } = useRegister();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -35,15 +40,10 @@ export function RegisterRouteComponent() {
       onSubmit: registerSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
-      const promise = () =>
-        new Promise((resolve) =>
-          setTimeout(() => resolve({ name: "Sonner" }), 2000),
-        );
-      toast.promise(promise, {
+      toast.promise(mutateAsync(value), {
         loading: "Registering user...",
         success: "Successfully registered in.",
-        error: "Error",
+        error: (err) => err.message || "Registration failed",
       });
     },
   });
@@ -56,10 +56,20 @@ export function RegisterRouteComponent() {
           Enter your email below to create your account
         </CardDescription>
       </CardHeader>
+
       <CardContent>
+        {apiError && (
+          <Alert variant="destructive" className="mb-5">
+            <AlertCircle className="size-4" />
+            <AlertTitle>Registration Failed</AlertTitle>
+            <AlertDescription>{apiError.message}</AlertDescription>
+          </Alert>
+        )}
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             form.handleSubmit();
           }}
         >
@@ -89,6 +99,7 @@ export function RegisterRouteComponent() {
                 );
               }}
             />
+
             <form.Field
               name="password"
               children={(field) => {
@@ -151,7 +162,11 @@ export function RegisterRouteComponent() {
               }}
             />
             <Field>
-              <Button type="submit">Create Account</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isPending ? "Processing..." : "Register"}
+              </Button>
+
               <FieldDescription className="text-center">
                 Already have an account? <Link to="/login">Sign in</Link>
               </FieldDescription>

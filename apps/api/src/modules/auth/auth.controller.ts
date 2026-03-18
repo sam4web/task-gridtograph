@@ -62,6 +62,14 @@ class AuthController {
       next(error);
     }
   }
+
+  // public async me(req: Request, res: Response, next: NextFunction) {
+  //   const user = await userRepository.findById(req.user.id);
+
+  //   return res.status(200).json(
+  //     new ApiResponse(200, user, "User profile fetched")
+  //   );
+  // });
 }
 
 export const authController = new AuthController();

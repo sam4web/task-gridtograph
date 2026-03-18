@@ -2,15 +2,12 @@ import {
   type IUserRepository,
   UserRepository,
 } from "@repo/database/repositories";
+import type { LoginUserDTO, RegisterUserDTO } from "@repo/shared";
 import bcrypt from "bcryptjs";
 
 import { env } from "../../config";
 import { ApiError, generateToken } from "../../lib";
-import type {
-  IAuthResponse,
-  LoginUserDTO,
-  RegisterUserDTO,
-} from "./auth.types";
+import type { IAuthServiceRes } from "./auth.types";
 
 class AuthService {
   private userRepository: IUserRepository;
@@ -21,7 +18,7 @@ class AuthService {
   public async login({
     email,
     password,
-  }: LoginUserDTO): Promise<IAuthResponse> {
+  }: LoginUserDTO): Promise<IAuthServiceRes> {
     const user = await this.userRepository.existsByEmail(email);
     if (!user) {
       throw ApiError.conflict("User with provided email does not exists.");
@@ -47,7 +44,7 @@ class AuthService {
   public async register({
     email,
     password,
-  }: RegisterUserDTO): Promise<IAuthResponse> {
+  }: RegisterUserDTO): Promise<IAuthServiceRes> {
     const existingUser = await this.userRepository.existsByEmail(email);
     if (existingUser) {
       throw ApiError.conflict("An account with this email already exists.");
