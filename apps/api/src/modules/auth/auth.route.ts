@@ -1,4 +1,4 @@
-import { authSchema } from "@repo/shared";
+import { loginSchema, registerSchema } from "@repo/shared";
 import { Router } from "express";
 
 import { authLimiter } from "../../middlewares";
@@ -10,12 +10,12 @@ export const authRouter: Router = Router();
 authRouter.use(authLimiter);
 authRouter.post(
   "/login",
-  validateRequest(authSchema, "body"),
+  validateRequest(loginSchema, "body"),
   authController.login,
 );
 authRouter.post(
   "/register",
-  validateRequest(authSchema, "body"),
+  validateRequest(registerSchema, "body"),
   authController.register,
 );
 authRouter.post("/logout", authController.logout);

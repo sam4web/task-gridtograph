@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const authSchema = z.object({
+export const loginSchema = z.object({
   email: z.email({
     error: (issue) =>
       issue.input === undefined
@@ -22,3 +22,19 @@ export const authSchema = z.object({
       "Password must contain at least one special character.",
     ),
 });
+
+export const registerSchema = loginSchema
+  .extend({
+    confirmPassword: z
+      .string({
+        error: (issue) =>
+          issue.input === undefined
+            ? "Confirm password is required."
+            : "Confirm password must be a valid string.",
+      })
+      .min(1, "Confirm password is required."),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password and confirm password must match.",
+    path: ["confirmPassword"],
+  });
