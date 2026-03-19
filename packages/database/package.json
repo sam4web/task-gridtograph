@@ -2,9 +2,9 @@
   "name": "@repo/database",
   "version": "0.0.0",
   "exports": {
-    "./postgres": "./src/postgresql.ts",
-    "./mongo": "./src/mongodb.ts",
-    "./error": "./src/error.ts",
+    "./postgres": "./src/postgresql/index.ts",
+    "./mongo": "./src/mongodb/index.ts",
+    "./error": "./src/shared/error.ts",
     "./repositories": "./src/repositories/index.ts"
   },
   "private": true,

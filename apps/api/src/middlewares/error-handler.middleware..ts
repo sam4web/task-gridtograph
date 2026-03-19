@@ -17,7 +17,7 @@ export const errorHandler = (
     });
     return res
       .status(error.statusCode)
-      .json(new ApiResponse(error.statusCode, error.message));
+      .json(new ApiResponse(error.statusCode, error.message, {}));
   }
 
   if (error instanceof RecordNotFoundError) {
@@ -27,7 +27,7 @@ export const errorHandler = (
     });
     return res
       .status(HTTP_STATUS.NOT_FOUND)
-      .json(new ApiResponse(HTTP_STATUS.NOT_FOUND, error.message));
+      .json(new ApiResponse(HTTP_STATUS.NOT_FOUND, error.message, {}));
   }
 
   logger.error(`Internal Server Error: ${error.message}`, {
@@ -42,6 +42,7 @@ export const errorHandler = (
       new ApiResponse(
         HTTP_STATUS.INTERNAL_SERVER_ERROR,
         "An unexpected error occurred. Please try again later.",
+        {},
       ),
     );
 };

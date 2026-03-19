@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 
-import { DatabaseError, RecordNotFoundError } from "../error";
-import { db, eq, users } from "../postgresql";
-import type { InsertUser, SelectUser } from "../schema/postgres";
+import { db, type InsertUser, type SelectUser, users } from "../postgresql";
+import { DatabaseError, RecordNotFoundError } from "../shared/error";
 
 export type IUserRepository = {
   getAll(): Promise<SelectUser[]>;
