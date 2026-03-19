@@ -2,12 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import { ZodError, type ZodType, type infer as zInfer } from "zod";
 import { ApiError } from "../lib";
 
-export interface ValidatedRequest extends Request {
-  validatedBody?: unknown;
-  validatedQuery?: unknown;
-  validatedParams?: unknown;
-}
-
 const sourceMap = {
   body: "validatedBody",
   query: "validatedQuery",
@@ -29,9 +23,8 @@ export const validateRequest = <T extends ZodType>(
       }
       const parsedData = schema.parse(dataToValidate);
       const targetKey = sourceMap[source];
-      (req as ValidatedRequest & { [K in typeof targetKey]: zInfer<T> })[
-        targetKey
-      ] = parsedData;
+      (req as Request & { [K in typeof targetKey]: zInfer<T> })[targetKey] =
+        parsedData;
       next();
     } catch (error) {
       if (error instanceof ZodError) {

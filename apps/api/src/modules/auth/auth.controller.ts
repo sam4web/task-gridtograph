@@ -1,15 +1,18 @@
-import { HTTP_STATUS } from "@repo/shared";
+import {
+  HTTP_STATUS,
+  type LoginUserDTO,
+  type RegisterUserDTO,
+} from "@repo/shared";
 import type { NextFunction, Request, Response } from "express";
 import ms from "ms";
 
 import { env } from "../../config";
-import { ApiResponse } from "../../lib";
+import { ApiError, ApiResponse } from "../../lib";
 import { authService } from "./auth.service";
-import type { LoginUserReq, RegisterUserReq } from "./auth.types";
 
 class AuthController {
   public async login(req: Request, res: Response, next: NextFunction) {
-    const credentials = (req as LoginUserReq).validatedBody;
+    const credentials = req.validatedBody as LoginUserDTO;
     try {
       const { accessToken, refreshToken } =
         await authService.login(credentials);
@@ -30,7 +33,7 @@ class AuthController {
   }
 
   public async register(req: Request, res: Response, next: NextFunction) {
-    const credentials = (req as RegisterUserReq).validatedBody;
+    const credentials = req.validatedBody as RegisterUserDTO;
     try {
       const { accessToken, refreshToken } =
         await authService.register(credentials);
@@ -63,13 +66,48 @@ class AuthController {
     }
   }
 
-  // public async me(req: Request, res: Response, next: NextFunction) {
-  //   const user = await userRepository.findById(req.user.id);
+  public async refresh(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token: string = req.cookies?.token;
+      if (!token) {
+        throw ApiError.unauthorized(
+          "Authentication failed: Refresh token not provided.",
+        );
+      }
+      const { accessToken, refreshToken } = await authService.refresh(token);
+      res.cookie("token", refreshToken, {
+        httpOnly: true,
+        maxAge: ms(env.REFRESH_TOKEN_EXPIRY_TIME as ms.StringValue),
+        sameSite: env.NODE_ENV === "development" ? "strict" : "none",
+        secure: env.NODE_ENV === "production",
+      });
+      return res.status(HTTP_STATUS.OK).json(
+        new ApiResponse(HTTP_STATUS.OK, "Session refreshed successfully", {
+          token: accessToken,
+        }),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
 
-  //   return res.status(200).json(
-  //     new ApiResponse(200, user, "User profile fetched")
-  //   );
-  // });
+  public async me(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.userId) {
+        throw ApiError.unauthorized(
+          "Authentication required. Please log in to continue.",
+        );
+      }
+      const user = await authService.me(req.userId);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(200, "User profile retrieved successfully", user),
+        );
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export const authController = new AuthController();

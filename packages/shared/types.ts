@@ -5,7 +5,7 @@ export type RegisterUserDTO = AuthDTO;
 export type LoginUserDTO = AuthDTO;
 
 export interface IAuthResponse {
-  accessToken: string;
+  token: string;
 }
 
 export interface User {

@@ -1,4 +1,4 @@
-import type { IApiResponse, User } from "@repo/shared";
+import type { IApiResponse, IAuthResponse, User } from "@repo/shared";
 import { create } from "zustand";
 import { apiClient } from "~/lib/api-client";
 import { queryClient } from "~/lib/query-client";
@@ -25,10 +25,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   actions: {
     initialize: async () => {
       try {
-        const accessToken = await apiClient.post<IApiResponse<string>, string>(
-          "/auth/refresh",
-        );
-        get().actions.setToken(accessToken);
+        const data = await apiClient.post<
+          IApiResponse<IAuthResponse>,
+          IAuthResponse
+        >("/auth/refresh");
+        get().actions.setToken(data.token);
         await get().actions.fetchUser();
       } catch (error) {
         get().actions.clearAuth();

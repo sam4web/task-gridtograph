@@ -22,7 +22,7 @@ export const useRegister = () => {
       );
     },
     onSuccess: async (data) => {
-      setToken(data.accessToken);
+      setToken(data.token);
       await fetchUser();
       navigate({ to: "/dashboard" });
     },
@@ -41,7 +41,7 @@ export const useLogin = () => {
       );
     },
     onSuccess: async (data) => {
-      setToken(data.accessToken);
+      setToken(data.token);
       await fetchUser();
       navigate({ to: "/dashboard" });
     },

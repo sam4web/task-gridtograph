@@ -1,7 +1,7 @@
 import { loginSchema, registerSchema } from "@repo/shared";
 import { Router } from "express";
 
-import { authLimiter } from "../../middlewares";
+import { authenticate, authLimiter } from "../../middlewares";
 import { validateRequest } from "../../middlewares/validate-request.middleware";
 import { authController } from "./auth.controller";
 
@@ -18,4 +18,6 @@ authRouter.post(
   validateRequest(registerSchema, "body"),
   authController.register,
 );
+authRouter.post("/refresh", authController.refresh);
+authRouter.get("/me", authenticate, authController.me);
 authRouter.post("/logout", authController.logout);

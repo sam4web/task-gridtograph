@@ -11,7 +11,7 @@ export const apiClient = axios.create({
 
 apiClient.interceptors.response.use(
   <T>(res: AxiosResponse<IApiResponse<T>>): T => {
-    return res.data as T;
+    return res.data.data as T;
   },
   (err) => {
     const message = err.response?.data?.message || "Something went wrong";
@@ -22,7 +22,7 @@ apiClient.interceptors.response.use(
 apiClient.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.authorization = `Bearer ${token}`;
   }
   return config;
 });

@@ -2,12 +2,16 @@ import {
   type IUserRepository,
   UserRepository,
 } from "@repo/database/repositories";
-import type { LoginUserDTO, RegisterUserDTO } from "@repo/shared";
+import type { LoginUserDTO, RegisterUserDTO, User } from "@repo/shared";
 import bcrypt from "bcryptjs";
 
 import { env } from "../../config";
-import { ApiError, generateToken } from "../../lib";
-import type { IAuthServiceRes } from "./auth.types";
+import { ApiError, generateToken, verifyToken } from "../../lib";
+
+interface IAuthResponse {
+  accessToken: string;
+  refreshToken: string;
+}
 
 class AuthService {
   private userRepository: IUserRepository;
@@ -18,7 +22,7 @@ class AuthService {
   public async login({
     email,
     password,
-  }: LoginUserDTO): Promise<IAuthServiceRes> {
+  }: LoginUserDTO): Promise<IAuthResponse> {
     const user = await this.userRepository.existsByEmail(email);
     if (!user) {
       throw ApiError.conflict("User with provided email does not exists.");
@@ -44,7 +48,7 @@ class AuthService {
   public async register({
     email,
     password,
-  }: RegisterUserDTO): Promise<IAuthServiceRes> {
+  }: RegisterUserDTO): Promise<IAuthResponse> {
     const existingUser = await this.userRepository.existsByEmail(email);
     if (existingUser) {
       throw ApiError.conflict("An account with this email already exists.");
@@ -62,6 +66,34 @@ class AuthService {
       env.REFRESH_TOKEN_EXPIRY_TIME,
     );
     return { accessToken, refreshToken };
+  }
+
+  public async refresh(token: string): Promise<IAuthResponse> {
+    const decoded = verifyToken(token, env.REFRESH_TOKEN_SECRET);
+    const user = await this.userRepository.findById(decoded.id);
+    if (!user) {
+      throw ApiError.unauthorized("User not found or token invalid.");
+    }
+    const newPayload = { id: user.id, email: user.email };
+    const accessToken = generateToken(
+      newPayload,
+      env.ACCESS_TOKEN_SECRET,
+      env.ACCESS_TOKEN_EXPIRY_TIME,
+    );
+    const refreshToken = generateToken(
+      newPayload,
+      env.REFRESH_TOKEN_SECRET,
+      env.REFRESH_TOKEN_EXPIRY_TIME,
+    );
+    return { accessToken, refreshToken };
+  }
+
+  public async me(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw ApiError.unauthorized("User not found or invalid id.");
+    }
+    return { email: user.email, id: user.id };
   }
 }
 
