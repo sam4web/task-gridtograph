@@ -10,8 +10,8 @@
 | Phase | Status | Key Milestones |
 | :--- | :--- | :--- |
 | **Phase 1: Architecture** | Completed | Turborepo setup, Biome, TypeScript configs |
-| **Phase 2: Authentication** | In Progress | Admin Login system, JWT, Postgres integration |
-| **Phase 3: Data Management** | Pending | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
+| **Phase 2: Authentication** | Completed | Admin Login system, JWT, Postgres integration |
+| **Phase 3: Data Management** | In Progress | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
 | **Phase 4: Sales Dashboard** | Pending | Product Table, Bar Chart (Qty), Pie Chart (Revenue) |
 | **Phase 5: Dynamic Sync** | Pending | Real-time Chart updates on CRUD operations |
 
@@ -60,3 +60,20 @@
 **Insights**
 * **Strategy:** Decoupling the Repository from the Service layer ensures database logic remains modular and testable.
 * **Impact:** Clean JWT-based architecture provides a scalable foundation for protecting admin routes.
+ 
+---
+
+### [2026-05-18] | Day 4: Full-Stack Auth & State
+**Focus:** Frontend authentication UI, persistent sessions, and API refinement.
+
+**Tasks Completed**
+* **UI & Forms:** Added **Shadcn UI** and built Login/Register forms using **TanStack Form**.
+* **Auth State:** Added an **Auth Provider** and implemented **persistent login** to maintain sessions on refresh.
+* **API Extension:** Fixed Auth Service bugs and added `/refresh` and `/me` routes for session management.
+* **Data Fetching:** Set up **TanStack Query** to handle Login and Register mutations.
+
+**Insights**
+* **Strategy:** Using **TanStack Query** and **Form** together simplifies complex loading and error states in the UI.
+* **Impact:** The `/refresh` token pattern combined with a React Context provider ensures a seamless, secure user experience.
+
+---
