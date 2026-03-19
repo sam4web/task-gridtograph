@@ -1,12 +1,5 @@
 import { sql } from "drizzle-orm";
-import {
-  boolean,
-  pgTable,
-  text,
-  timestamp,
-  uuid,
-  varchar,
-} from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -21,14 +14,6 @@ export const users = pgTable("users", {
     .notNull()
     .$onUpdate(() => new Date()),
   lastLogin: timestamp("last_login"),
-});
-
-export const otps = pgTable("otps", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  email: text("email").notNull(),
-  code: varchar({ length: 6 }).notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  consumed: boolean("consumed").default(false),
 });
 
 export type InsertUser = typeof users.$inferInsert;

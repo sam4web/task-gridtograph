@@ -4,11 +4,12 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 
+import { AuthProvider } from "~/components/auth-provider";
+import { TooltipProvider } from "~/components/ui/tooltip";
 import { env } from "~/config/env";
 import { queryClient } from "~/lib/query-client";
 import { routeTree } from "~/routeTree.gen";
 import "~/index.css";
-import { AuthProvider } from "./components/auth-provider";
 
 if (env.VITE_ENV === "production") {
   disableReactDevTools();
@@ -28,9 +29,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
+        <TooltipProvider>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </TooltipProvider>
       </QueryClientProvider>
     </StrictMode>,
   );

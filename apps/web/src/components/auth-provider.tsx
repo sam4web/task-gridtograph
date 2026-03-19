@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuthActions, useAuthStore } from "../store/auth-store";
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { initialize } = useAuthActions();
   const isInitializing = useAuthStore((s) => s.isInitializing);
 
@@ -19,4 +19,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return <>{children}</>;
-};
+}
