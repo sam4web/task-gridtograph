@@ -64,16 +64,16 @@
 ---
 
 ### [2026-05-18] | Day 4: Full-Stack Auth & State
-**Focus:** Frontend authentication UI, persistent sessions, and API refinement.
+**Focus:** Frontend UI, persistent sessions, and API refinement.
 
 **Tasks Completed**
-* **UI & Forms:** Added **Shadcn UI** and built Login/Register forms using **TanStack Form**.
-* **Auth State:** Added an **Auth Provider** and implemented **persistent login** to maintain sessions on refresh.
-* **API Extension:** Fixed Auth Service bugs and added `/refresh` and `/me` routes for session management.
+* **UI & Forms:** Set up **Shadcn UI** and built Login/Register forms with **TanStack Form**.
+* **State Management:** Integrated **Zustand** for global auth state and added a React **Auth Provider**.
+* **Session Persistence:** Implemented **persistent login** logic and added `/refresh` and `/me` API routes.
 * **Data Fetching:** Set up **TanStack Query** to handle Login and Register mutations.
 
 **Insights**
-* **Strategy:** Using **TanStack Query** and **Form** together simplifies complex loading and error states in the UI.
-* **Impact:** The `/refresh` token pattern combined with a React Context provider ensures a seamless, secure user experience.
+* **Strategy:** Using **Zustand** with **TanStack Query** simplifies state sync between the server and the UI.
+* **Impact:** The `/refresh` token pattern ensures a secure, seamless user experience without constant re-logins.
 
 ---

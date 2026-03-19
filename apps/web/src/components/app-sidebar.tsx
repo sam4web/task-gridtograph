@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { type icons, Table2 } from "lucide-react";
+import { ChartColumnBig, type icons } from "lucide-react";
 import { Icon } from "./icon";
 import {
   Sidebar,
@@ -13,7 +13,7 @@ import {
 
 const navitems = [
   { title: "Dashboard", icon: "LayoutDashboard", url: "/dashboard" },
-  { title: "Data Table", icon: "Grid3x2", url: "/dashboard/data-table" },
+  { title: "Data Table", icon: "Table2", url: "/dashboard/data-table" },
   { title: "Settings", icon: "Settings", url: "/dashboard/settings" },
 ];
 
@@ -26,7 +26,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <Link to="/" className="px-3 py-5">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Table2 className="size-4" />
+                  <ChartColumnBig className="size-5!" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold text-lg">Grid To Graph</span>
@@ -49,7 +49,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className="py-5 px-3"
                   >
                     <Link to={item.url} className="font-medium text-lg">
-                      <Icon name={item.icon as keyof typeof icons} />
+                      <Icon
+                        name={item.icon as keyof typeof icons}
+                        className="size-4.5!"
+                      />
                       {item.title}
                     </Link>
                   </SidebarMenuButton>
