@@ -8,6 +8,12 @@ const dbEnvSchema = z.object({
         ? '"DATABASE_URL" is required.'
         : '"DATABASE_URL" must be a valid URL.',
   }),
+  MONGODB_URL: z.url({
+    error: (issue) =>
+      issue.input === undefined
+        ? '"MONGODB_URL" is required.'
+        : '"MONGODB_URL" must be a valid URL.',
+  }),
 });
 
 export const env = enforceEnv(dbEnvSchema, process.env);

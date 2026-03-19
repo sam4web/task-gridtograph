@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { connectDB } from "@repo/database/mongo";
 import { db, sql } from "@repo/database/postgres";
 import app from "./app";
 import { env, logger } from "./config";
@@ -27,6 +28,7 @@ const bootstrap = async () => {
     // --- Database Connection ---
     logger.info("Attempting to connect to database...");
     await db.execute(sql`SELECT 1`);
+    await connectDB();
     logger.info("Database connection established.");
 
     // --- Start HTTP Server ---
@@ -35,8 +37,9 @@ const bootstrap = async () => {
         `Server listening on port ${env.PORT} in ${env.NODE_ENV} mode.`,
       );
     });
-  } catch (error) {
-    logger.error("Failed to start server:", error);
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    logger.error("Failed to start server:", errMsg);
     process.exit(1);
   }
 };
