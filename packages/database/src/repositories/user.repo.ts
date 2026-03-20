@@ -2,11 +2,11 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 import {
-  db,
-  users,
   type Database,
+  db,
   type InsertUser,
   type SelectUser,
+  users,
 } from "../postgresql";
 import { DatabaseError, RecordNotFoundError } from "../shared/error";
 
@@ -16,7 +16,7 @@ export type IUserRepository = {
   findById(id: string): Promise<SelectUser | null>;
   existsByEmail(email: string): Promise<SelectUser | null>;
   findByEmail(email: string): Promise<SelectUser | null>;
-  update(id: string, data: InsertUser): Promise<SelectUser | null>;
+  update(id: string, data: Partial<InsertUser>): Promise<SelectUser | null>;
   delete(id: string): Promise<boolean>;
 };
 
