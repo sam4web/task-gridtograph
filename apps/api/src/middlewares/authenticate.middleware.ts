@@ -22,7 +22,6 @@ export const authenticate = async (
       );
     }
     req.userId = decodedId;
-
     next();
   } catch (error) {
     next(error);

@@ -1,18 +1,53 @@
-import { type Request, type Response, Router } from "express";
-import type { UploadedFile } from "express-fileupload";
+import { Router } from "express";
 import { authenticate, datasetFileMiddleware } from "../../middlewares";
+import { validateRequest } from "../../middlewares/validate-request.middleware";
+import { datasetController } from "./dataset.controller";
+import {
+  addRowsSchema,
+  fileIdParamsSchema,
+  rowParamsSchema,
+  updateMetadataSchema,
+  updateRowSchema,
+} from "./dataset.schema";
 
 const router: Router = Router();
 
 router.use(authenticate);
 
-// router.get("/");
-// router.post("/upload");
-// router.get("/:fileId");
-// router.post("/:fileId");
-// router.patch("/:fileId");
-// router.delete("/:fileId");
-// router.put("/:fileId/rows/:rowId");
-// router.delete("/:fileId/rows/:rowId");
+router.get("/", datasetController.getAll);
+router.post("/upload", datasetFileMiddleware, datasetController.upload);
+router.get(
+  "/:fileId",
+  validateRequest(fileIdParamsSchema, "params"),
+  datasetController.getById,
+);
+router.post(
+  "/:fileId",
+  validateRequest(fileIdParamsSchema, "params"),
+  validateRequest(addRowsSchema, "body"),
+  datasetController.addRows,
+);
+router.patch(
+  "/:fileId",
+  validateRequest(fileIdParamsSchema, "params"),
+  validateRequest(updateMetadataSchema, "body"),
+  datasetController.updateMetadata,
+);
+router.delete(
+  "/:fileId",
+  validateRequest(fileIdParamsSchema, "params"),
+  datasetController.deleteById,
+);
+router.put(
+  "/:fileId/rows/:rowId",
+  validateRequest(rowParamsSchema, "params"),
+  validateRequest(updateRowSchema, "body"),
+  datasetController.updateRow,
+);
+router.delete(
+  "/:fileId/rows/:rowId",
+  validateRequest(rowParamsSchema, "params"),
+  datasetController.deleteRow,
+);
 
 export default router;
