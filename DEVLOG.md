@@ -11,8 +11,8 @@
 | :--- | :--- | :--- |
 | **Phase 1: Architecture** | Completed | Turborepo setup, Biome, TypeScript configs |
 | **Phase 2: Authentication** | Completed | Admin Login system, JWT, Postgres integration |
-| **Phase 3: Data Management** | In Progress | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
-| **Phase 4: Sales Dashboard** | Pending | Product Table, Bar Chart (Qty), Pie Chart (Revenue) |
+| **Phase 3: Data Management** | Completed | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
+| **Phase 4: Sales Dashboard** | In Progress | Product Table, Bar Chart (Qty), Pie Chart (Revenue) |
 | **Phase 5: Dynamic Sync** | Pending | Real-time Chart updates on CRUD operations |
 
 ---
@@ -75,5 +75,19 @@
 **Insights**
 * **Strategy:** Using **Zustand** with **TanStack Query** simplifies state sync between the server and the UI.
 * **Impact:** The `/refresh` token pattern ensures a secure, seamless user experience without constant re-logins.
+
+---
+
+### [2026-05-20] | Day 5: Data Management & MongoDB
+**Focus:** MongoDB integration and Excel file processing.
+
+**Tasks Completed**
+* **Database:** Set up **MongoDB** and created a **Dataset Repository** for collection management.
+* **File logic:** Built **file validation middleware** and logic to process and store Excel uploads.
+* **API & CRUD:** Developed the **Dataset** controller, routes, and services for full data management.
+
+**Insights**
+* **Strategy:** Using MongoDB for sales data provides the flexible document structure needed for dynamic product attributes.
+* **Impact:** Dedicated file middleware ensures only valid `.xlsx` data reaches the processing layer, preventing database corruption.
 
 ---
