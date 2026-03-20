@@ -6,7 +6,7 @@ export class ApiResponse<T> implements IApiResponse<T> {
   constructor(
     public statusCode: number,
     public message: string = "Success",
-    public data: T,
+    public data?: T,
   ) {
     this.success = statusCode < 400;
   }

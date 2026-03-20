@@ -9,10 +9,12 @@ import express, {
 } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+
 import { corsOptions, logger } from "./config";
 import { ApiError, ApiResponse } from "./lib";
 import { errorHandler, publicApiLimiter } from "./middlewares";
 import { authRouter } from "./modules/auth";
+import { datasetRouter } from "./modules/dataset";
 
 const app: Application = express();
 
@@ -45,6 +47,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // register module routes
 app.use("/api/auth", authRouter);
+app.use("/api/dataset", datasetRouter);
 
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)

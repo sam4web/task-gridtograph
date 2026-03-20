@@ -5,19 +5,21 @@ import { authenticate, authLimiter } from "../../middlewares";
 import { validateRequest } from "../../middlewares/validate-request.middleware";
 import { authController } from "./auth.controller";
 
-export const authRouter: Router = Router();
+const router: Router = Router();
 
-authRouter.use(authLimiter);
-authRouter.post(
+router.use(authLimiter);
+router.post(
   "/login",
   validateRequest(loginSchema, "body"),
   authController.login,
 );
-authRouter.post(
+router.post(
   "/register",
   validateRequest(registerSchema, "body"),
   authController.register,
 );
-authRouter.post("/refresh", authController.refresh);
-authRouter.get("/me", authenticate, authController.me);
-authRouter.post("/logout", authController.logout);
+router.post("/refresh", authController.refresh);
+router.get("/me", authenticate, authController.me);
+router.post("/logout", authController.logout);
+
+export default router;

@@ -1,2 +1,2 @@
 export * from "./connection";
-export * from "./models/dataset.ts";
+export * from "./models/dataset";
