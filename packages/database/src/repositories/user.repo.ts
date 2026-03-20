@@ -1,11 +1,17 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { db, type InsertUser, type SelectUser, users } from "../postgresql";
+import {
+  db,
+  users,
+  type Database,
+  type InsertUser,
+  type SelectUser,
+} from "../postgresql";
 import { DatabaseError, RecordNotFoundError } from "../shared/error";
 
 export type IUserRepository = {
-  getAll(): Promise<SelectUser[]>;
+  findAll(): Promise<SelectUser[]>;
   create(data: InsertUser): Promise<SelectUser>;
   findById(id: string): Promise<SelectUser | null>;
   existsByEmail(email: string): Promise<SelectUser | null>;
@@ -15,9 +21,11 @@ export type IUserRepository = {
 };
 
 export class UserRepository implements IUserRepository {
-  public async getAll(): Promise<SelectUser[]> {
+  constructor(private readonly db: Database) {}
+
+  public async findAll(): Promise<SelectUser[]> {
     try {
-      const result = await db.select().from(users);
+      const result = await this.db.select().from(users);
       return result;
     } catch (error) {
       throw new DatabaseError("Failed to fetch users.", error);
@@ -28,7 +36,7 @@ export class UserRepository implements IUserRepository {
     try {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(data.password, salt);
-      const [result] = await db
+      const [result] = await this.db
         .insert(users)
         .values({ ...data, password: hashedPassword })
         .returning();
@@ -44,7 +52,7 @@ export class UserRepository implements IUserRepository {
 
   public async findById(id: string): Promise<SelectUser> {
     try {
-      const result = await db.query.users.findFirst({
+      const result = await this.db.query.users.findFirst({
         where: (users, { eq }) => eq(users.id, id),
       });
       if (!result) {
@@ -59,7 +67,7 @@ export class UserRepository implements IUserRepository {
 
   public async existsByEmail(email: string): Promise<SelectUser | null> {
     try {
-      const result = await db.query.users.findFirst({
+      const result = await this.db.query.users.findFirst({
         where: (users, { eq }) => eq(users.email, email),
       });
       return result ?? null;
@@ -86,7 +94,7 @@ export class UserRepository implements IUserRepository {
     data: Partial<InsertUser>,
   ): Promise<SelectUser> {
     try {
-      const [result] = await db
+      const [result] = await this.db
         .update(users)
         .set(data)
         .where(eq(users.id, id))
@@ -103,7 +111,7 @@ export class UserRepository implements IUserRepository {
 
   public async delete(id: string): Promise<boolean> {
     try {
-      const deletedRows = await db
+      const deletedRows = await this.db
         .delete(users)
         .where(eq(users.id, id))
         .returning({ id: users.id });
@@ -117,3 +125,5 @@ export class UserRepository implements IUserRepository {
     }
   }
 }
+
+export const userRepository = new UserRepository(db);

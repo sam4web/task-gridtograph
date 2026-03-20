@@ -1,7 +1,4 @@
-import {
-  type IUserRepository,
-  UserRepository,
-} from "@repo/database/repositories";
+import { userRepository } from "@repo/database/repositories";
 import type { LoginUserDTO, RegisterUserDTO, User } from "@repo/shared";
 import bcrypt from "bcryptjs";
 
@@ -14,16 +11,11 @@ interface IAuthResponse {
 }
 
 class AuthService {
-  private userRepository: IUserRepository;
-  constructor(userRepository: IUserRepository = new UserRepository()) {
-    this.userRepository = userRepository;
-  }
-
   public async login({
     email,
     password,
   }: LoginUserDTO): Promise<IAuthResponse> {
-    const user = await this.userRepository.existsByEmail(email);
+    const user = await userRepository.existsByEmail(email);
     if (!user) {
       throw ApiError.conflict("User with provided email does not exists.");
     }
@@ -49,11 +41,11 @@ class AuthService {
     email,
     password,
   }: RegisterUserDTO): Promise<IAuthResponse> {
-    const existingUser = await this.userRepository.existsByEmail(email);
+    const existingUser = await userRepository.existsByEmail(email);
     if (existingUser) {
       throw ApiError.conflict("An account with this email already exists.");
     }
-    const user = await this.userRepository.create({ email, password });
+    const user = await userRepository.create({ email, password });
     const payload = { id: user.id, email: user.email };
     const accessToken = generateToken(
       payload,
@@ -70,7 +62,7 @@ class AuthService {
 
   public async refresh(token: string): Promise<IAuthResponse> {
     const decoded = verifyToken(token, env.REFRESH_TOKEN_SECRET);
-    const user = await this.userRepository.findById(decoded.id);
+    const user = await userRepository.findById(decoded.id);
     if (!user) {
       throw ApiError.unauthorized("User not found or token invalid.");
     }
@@ -89,7 +81,7 @@ class AuthService {
   }
 
   public async me(userId: string): Promise<User> {
-    const user = await this.userRepository.findById(userId);
+    const user = await userRepository.findById(userId);
     if (!user) {
       throw ApiError.unauthorized("User not found or invalid id.");
     }
