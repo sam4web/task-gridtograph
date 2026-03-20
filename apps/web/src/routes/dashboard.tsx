@@ -4,7 +4,6 @@ import {
   Outlet,
   redirect,
   useLocation,
-  useMatches,
 } from "@tanstack/react-router";
 import { Fragment } from "react";
 import { AppSidebar } from "~/components/app-sidebar";
@@ -53,7 +52,7 @@ function DashboardRouteComponent() {
     >
       <AppSidebar />
       <SidebarInset>
-        <header className="flex justify-between items-center h-16 shrink-0  px-4">
+        <header className="flex justify-between items-center h-16 shrink-0 px-5">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1 cursor-pointer" />
             <Separator
@@ -99,8 +98,10 @@ function DashboardRouteComponent() {
           </div>
           <ThemeToggle />
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Outlet />
+        <div className="flex flex-1 flex-col gap-4">
+          <div className="w-full min-h-dvh px-5 py-3">
+            <Outlet />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

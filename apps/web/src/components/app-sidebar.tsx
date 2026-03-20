@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { ChartColumnBig, type icons } from "lucide-react";
+import { useUploadModal } from "~/hooks/use-upload-modal";
 import { Icon } from "./icon";
+import { Button } from "./ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -13,11 +15,14 @@ import {
 
 const navitems = [
   { title: "Dashboard", icon: "LayoutDashboard", url: "/dashboard" },
-  { title: "Data Table", icon: "Table2", url: "/dashboard/data-table" },
+  { title: "Library", icon: "Database", url: "/dashboard/library" },
+  { title: "Editor", icon: "SquarePen", url: "/dashboard/editor" },
   { title: "Settings", icon: "Settings", url: "/dashboard/settings" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const onOpen = useUploadModal((state) => state.onOpen);
+
   return (
     <Sidebar className="bg-background! p-3 pr-1" variant="floating" {...props}>
       <SidebarHeader>
@@ -36,7 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="flex flex-col justify-between">
         <SidebarGroup>
           <SidebarMenu className="gap-0.5">
             {navitems.map((item) => {
@@ -60,6 +65,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               );
             })}
           </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup className="py-5 px-3">
+          <Button onClick={onOpen} className="cursor-pointer" type="button">
+            Upload File
+          </Button>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

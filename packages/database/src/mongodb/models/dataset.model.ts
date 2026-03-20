@@ -19,4 +19,4 @@ const datasetSchema = new Schema<IDataset>(
   { timestamps: true },
 );
 
-export const Dataset = model<IDataset>("IDataset", datasetSchema);
+export const Dataset = model<IDataset>("Dataset", datasetSchema);
