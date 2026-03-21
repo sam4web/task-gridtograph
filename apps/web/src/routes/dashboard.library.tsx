@@ -70,7 +70,7 @@ function LibraryRouteComponent() {
   const onOpen = useUploadModal((state) => state.onOpen);
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full h-full space-y-8">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground mb-0.5">
@@ -100,7 +100,7 @@ function LibraryRouteComponent() {
           >
             <CardContent className="px-4">
               <div className="flex justify-between items-start mb-4">
-                <div className="p-2 bg-primary-foreground rounded-lg">
+                <div className="p-2 bg-primary/10 rounded-lg">
                   <FileText className="size-6 text-primary" />
                 </div>
                 <DropdownMenu>
@@ -137,7 +137,7 @@ function LibraryRouteComponent() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3.5 border-t border-primary-foreground/20">
+              <div className="flex items-center justify-between pt-3.5 border-t border-primary-foreground/15">
                 <div className="flex items-center gap-2 text-accent-foreground">
                   <Columns className="size-4 opacity-70" />
                   <span className="text-xs font-medium font-mono">
@@ -151,7 +151,7 @@ function LibraryRouteComponent() {
 
         <button
           onClick={onOpen}
-          className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-muted bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all group cursor-pointer"
+          className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed border-muted-foreground/20 dark:border-muted bg-muted/30 hover:bg-muted/50 hover:border-primary/50 transition-all group cursor-pointer"
           type="button"
         >
           <div className="mb-4 p-3 rounded-full bg-primary/10 text-primary">

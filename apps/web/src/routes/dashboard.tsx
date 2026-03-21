@@ -51,8 +51,8 @@ function DashboardRouteComponent() {
       }
     >
       <AppSidebar />
-      <SidebarInset>
-        <header className="flex justify-between items-center h-16 shrink-0 px-5">
+      <SidebarInset className="flex flex-col h-full overflow-hidden">
+        <header className="flex justify-between items-center h-16 px-5 border-b border-border/40">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1 cursor-pointer" />
             <Separator
@@ -62,13 +62,7 @@ function DashboardRouteComponent() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  {paths.length === 0 ? (
-                    <BreadcrumbPage>Dashboard</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink asChild>
-                      <Link to="/dashboard">Dashboard</Link>
-                    </BreadcrumbLink>
-                  )}
+                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
                 </BreadcrumbItem>
 
                 {paths.map((path, idx) => {
@@ -98,8 +92,9 @@ function DashboardRouteComponent() {
           </div>
           <ThemeToggle />
         </header>
-        <div className="flex flex-1 flex-col gap-4">
-          <div className="w-full min-h-dvh px-5 py-3">
+
+        <div className="flex-1 overflow-y-auto w-full">
+          <div className="container mx-auto p-6 min-h-full">
             <Outlet />
           </div>
         </div>

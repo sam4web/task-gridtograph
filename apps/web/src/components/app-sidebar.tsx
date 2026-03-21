@@ -14,10 +14,9 @@ import {
 } from "./ui/sidebar";
 
 const navitems = [
-  { title: "Dashboard", icon: "LayoutDashboard", url: "/dashboard" },
   { title: "Library", icon: "Database", url: "/dashboard/library" },
+  { title: "Analytics", icon: "ChartArea", url: "/dashboard/analytics" },
   { title: "Editor", icon: "SquarePen", url: "/dashboard/editor" },
-  { title: "Settings", icon: "Settings", url: "/dashboard/settings" },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
