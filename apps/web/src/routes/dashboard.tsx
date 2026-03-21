@@ -1,6 +1,5 @@
 import {
   createFileRoute,
-  Link,
   Outlet,
   redirect,
   useLocation,
@@ -11,7 +10,6 @@ import { ThemeToggle } from "~/components/theme-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
