@@ -23,15 +23,9 @@ import {
 } from "~/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
 
-export const Route = createFileRoute("/dashboard/analytics/$fileId")({
-  component: AnalyticsRouteComponent,
+export const Route = createFileRoute("/dashboard/visualize/$fileId")({
+  component: VisualizeRouteComponent,
 });
-
-// Primary Action: Clicking the "FileName" or a "Visualize" button on a card should navigate the user to /editor/69bd7e56....
-// Sidebar State: Once a file is "Active," the Sidebar's Editor link should become highlighted and store that fileId in your Global State (Zustand/Redux) or URL params.
-// Default State: If no file is selected, clicking "Editor" in the sidebar should either:
-//     Redirect the user back to the Library with a toast message: "Please select a dataset to edit."
-//     Open the Most Recent file automatically.
 
 const DUMMY_DATA = [
   {
@@ -61,7 +55,7 @@ const DUMMY_DATA = [
   },
 ];
 
-function AnalyticsRouteComponent() {
+function VisualizeRouteComponent() {
   const [chartType, setChartType] = useState("bar");
   const [xAxis, setXAxis] = useState("name");
   const [yAxis, setYAxis] = useState("revenue");

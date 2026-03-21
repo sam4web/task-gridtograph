@@ -64,9 +64,7 @@ function DashboardRouteComponent() {
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>Dashboard</BreadcrumbPage>
                 </BreadcrumbItem>
-
-                {paths.map((path, idx) => {
-                  const isLast = idx === paths.length - 1;
+                {paths.map((path) => {
                   const label = path
                     .replace(/-/g, " ")
                     .replace(/\b\w/g, (char) => char.toUpperCase());
@@ -74,15 +72,7 @@ function DashboardRouteComponent() {
                     <Fragment key={path}>
                       <BreadcrumbSeparator className="hidden md:block" />
                       <BreadcrumbItem>
-                        {isLast ? (
-                          <BreadcrumbPage>{label}</BreadcrumbPage>
-                        ) : (
-                          <BreadcrumbLink asChild>
-                            <Link to={`/dashboard/${path}` as never}>
-                              {label}
-                            </Link>
-                          </BreadcrumbLink>
-                        )}
+                        <BreadcrumbPage>{label}</BreadcrumbPage>
                       </BreadcrumbItem>
                     </Fragment>
                   );

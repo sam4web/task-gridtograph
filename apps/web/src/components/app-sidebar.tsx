@@ -15,7 +15,7 @@ import {
 
 const navitems = [
   { title: "Library", icon: "Database", url: "/dashboard/library" },
-  { title: "Analytics", icon: "ChartArea", url: "/dashboard/analytics" },
+  { title: "Visualize", icon: "ChartArea", url: "/dashboard/visualize" },
   { title: "Editor", icon: "SquarePen", url: "/dashboard/editor" },
 ];
 
@@ -29,12 +29,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link to="/" className="px-3 py-5">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground mr-1">
                   <ChartColumnBig className="size-5!" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold text-lg">Grid To Graph</span>
-                </div>
+                <span className="font-semibold text-lg font-mono">
+                  Grid To Graph
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -47,6 +47,8 @@ export function PieChartComponent({
             backgroundColor: "var(--card)",
             borderColor: "var(--border)",
             borderRadius: "8px",
+          }}
+          itemStyle={{
             color: "var(--foreground)",
           }}
         />

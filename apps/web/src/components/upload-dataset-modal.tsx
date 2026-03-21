@@ -1,7 +1,8 @@
 import { FILE_UPLOAD_CONSTANTS } from "@repo/shared";
 import { useForm } from "@tanstack/react-form";
 import { FileSpreadsheet, Loader2, UploadCloud, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "~/components/ui/dialog";
+import { useUploadDataset } from "~/hooks/use-dataset";
 
 interface UploadModalProps {
   isOpen: boolean;
@@ -21,6 +23,7 @@ export function UploadDatasetsModal({
   isOpen,
   onOpenChange,
 }: UploadModalProps) {
+  const uploadMutation = useUploadDataset();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
@@ -28,17 +31,15 @@ export function UploadDatasetsModal({
       dataset: null as File | null,
     },
     onSubmit: async ({ value }) => {
-      console.log("Submitting to backend:", value.dataset);
-      // await uploadService(value.dataset);
+      if (!value.dataset) {
+        toast.error("Please select a file first");
+        return;
+      }
+      await uploadMutation.mutateAsync(value.dataset);
+      form.reset();
+      onOpenChange(isOpen);
     },
   });
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setIsDragging(true);
-    else if (e.type === "dragleave") setIsDragging(false);
-  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -83,7 +84,6 @@ export function UploadDatasetsModal({
               }}
               children={(field) => (
                 <div className="space-y-3">
-                  {/* Hidden Native Input */}
                   <input
                     type="file"
                     ref={fileInputRef}

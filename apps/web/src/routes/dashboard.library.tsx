@@ -35,7 +35,7 @@ function LibraryRouteComponent() {
   const handleViewData = (id: string) => {
     localStorage.setItem("lastFileId", id);
     navigate({
-      to: "/dashboard/analytics/$fileId",
+      to: "/dashboard/visualize/$fileId",
       params: { fileId: id },
     });
   };

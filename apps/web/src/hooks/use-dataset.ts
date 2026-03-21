@@ -1,5 +1,6 @@
 import type { IApiResponse } from "@repo/shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { apiClient } from "~/lib/api-client";
 
@@ -38,6 +39,38 @@ export const useDeleteDataset = () => {
     onError: (error: any) => {
       const message =
         error?.response?.data?.message || "Failed to delete the dataset.";
+      toast.error(message);
+    },
+  });
+};
+
+export const useUploadDataset = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("dataset", file);
+      return apiClient.post<IApiResponse<IDataset>, IDataset>(
+        "/datasets/upload",
+        formData,
+      );
+    },
+    onSuccess: (newDataset) => {
+      toast.success("File processed! Redirecting...");
+      queryClient.setQueryData<IDataset[]>(["datasets"], (old) => [
+        newDataset,
+        ...(old || []),
+      ]);
+      localStorage.setItem("lastFileId", newDataset._id);
+      navigate({
+        to: "/dashboard/visualize/$fileId",
+        params: { fileId: newDataset._id },
+      });
+    },
+    onError: (error: any) => {
+      const message = error?.response?.message || "Upload failed.";
       toast.error(message);
     },
   });
