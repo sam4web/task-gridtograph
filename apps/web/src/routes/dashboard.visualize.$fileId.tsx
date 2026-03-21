@@ -1,15 +1,19 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import {
+  ArrowRight,
   Axis3d,
   BarChart3,
   LayoutGrid,
   LineChartIcon,
+  Loader2,
   PieChartIcon,
+  RefreshCw,
   Search,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BarChartComponent } from "~/components/bar-chart";
 import { DataTable } from "~/components/data-table";
+import { DatasetErrorState } from "~/components/dataset-error-state";
 import { LineChartComponent } from "~/components/line-cart";
 import { PieChartComponent } from "~/components/pie-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
@@ -21,44 +25,81 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Skeleton } from "~/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group";
+import { useGetDatasetById } from "~/hooks/use-dataset";
 
 export const Route = createFileRoute("/dashboard/visualize/$fileId")({
   component: VisualizeRouteComponent,
 });
 
-const DUMMY_DATA = [
-  {
-    name: "Pro Glow Headphones",
-    category: "Audio",
-    quantity: 142,
-    revenue: 14200,
-  },
-  {
-    name: "Smart Watch v2",
-    category: "Wearables",
-    quantity: 89,
-    revenue: 26700,
-  },
-  { name: "UltraClean Air", category: "Home", quantity: 56, revenue: 16800 },
-  {
-    name: "NovaPad Tablet",
-    category: "Electronics",
-    quantity: 203,
-    revenue: 60900,
-  },
-  {
-    name: "Standing Desk",
-    category: "Furniture",
-    quantity: 34,
-    revenue: 17000,
-  },
-];
-
 function VisualizeRouteComponent() {
+  const { fileId } = useParams({ from: "/dashboard/visualize/$fileId" });
+  const {
+    data: dataset,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetDatasetById(fileId);
+
   const [chartType, setChartType] = useState("bar");
-  const [xAxis, setXAxis] = useState("name");
-  const [yAxis, setYAxis] = useState("revenue");
+  const [xAxis, setXAxis] = useState("");
+  const [yAxis, setYAxis] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (dataset?.columns?.length) {
+      if (!xAxis) setXAxis(dataset.columns[0]!);
+      if (!yAxis) setYAxis(dataset.columns[1]! || dataset.columns[0]!);
+    }
+  }, [dataset, xAxis, yAxis]);
+
+  const filteredData = useMemo(() => {
+    if (!dataset?.data) return [];
+    if (!searchQuery) return dataset.data;
+    const lowerQuery = searchQuery.toLowerCase();
+    return dataset.data.filter((row) =>
+      dataset.columns.some((col) =>
+        String(row[col] ?? "")
+          .toLowerCase()
+          .includes(lowerQuery),
+      ),
+    );
+  }, [dataset, searchQuery]);
+
+  if (isLoading) {
+    return <VisualizeSkeletonComponent />;
+  }
+
+  if (isError) {
+    return (
+      <DatasetErrorState
+        title="Failed to Load Visualization"
+        description="We encountered an error while fetching the data for your charts. Please check your connection."
+        action={{
+          type: "button",
+          label: "Retry Fetching",
+          onClick: () => refetch(),
+          icon: RefreshCw,
+        }}
+      />
+    );
+  }
+
+  if (!dataset) {
+    return (
+      <DatasetErrorState
+        title="Visualization Data Missing"
+        description="The dataset you're trying to visualize could not be found. It may have been deleted."
+        action={{
+          type: "link",
+          label: "Return to Library",
+          to: "/dashboard/library",
+          icon: ArrowRight,
+        }}
+      />
+    );
+  }
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-background text-foreground font-sans rounded-xl border border-border">
@@ -84,8 +125,11 @@ function VisualizeRouteComponent() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="name">Product Name</SelectItem>
-                  <SelectItem value="category">Category</SelectItem>
+                  {dataset.columns.map((col) => (
+                    <SelectItem key={col} value={col}>
+                      {col}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -105,8 +149,11 @@ function VisualizeRouteComponent() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="revenue">Revenue</SelectItem>
-                  <SelectItem value="quantity">Quantity</SelectItem>
+                  {dataset.columns.map((col) => (
+                    <SelectItem key={col} value={col}>
+                      {col}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -145,7 +192,7 @@ function VisualizeRouteComponent() {
         </div>
       </aside>
 
-      <main className="flex-1 h-full overflow-y-auto bg-muted/5 p-8 relative">
+      <div className="flex-1 h-full overflow-y-auto bg-muted/5 p-8 relative">
         <div className="max-w-5xl mx-auto space-y-8">
           <Card className="border-border/40 bg-card shadow-xl rounded-xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-muted/10">
@@ -157,21 +204,21 @@ function VisualizeRouteComponent() {
             <CardContent className="h-112.5 p-2">
               {chartType === "bar" && (
                 <BarChartComponent
-                  data={DUMMY_DATA}
+                  data={filteredData}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
               )}
               {chartType === "line" && (
                 <LineChartComponent
-                  data={DUMMY_DATA}
+                  data={filteredData}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
               )}
               {chartType === "pie" && (
                 <PieChartComponent
-                  data={DUMMY_DATA}
+                  data={filteredData}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
@@ -193,11 +240,80 @@ function VisualizeRouteComponent() {
               </div>
             </CardHeader>
             <CardContent>
-              <DataTable data={DUMMY_DATA} />
+              <DataTable columns={dataset.columns} data={filteredData} />
             </CardContent>
           </Card>
         </div>
-      </main>
+      </div>
+    </div>
+  );
+}
+
+function VisualizeSkeletonComponent() {
+  return (
+    <div className="flex h-full w-full overflow-hidden bg-background text-foreground font-sans rounded-xl border border-border">
+      <aside className="w-72 border-r border-border bg-card/20 p-5 flex flex-col gap-6 shrink-0">
+        <div className="space-y-4 mb-6">
+          <Skeleton className="h-4 w-24 opacity-70" />
+          <div className="space-y-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="space-y-1.5">
+                <Skeleton className="h-3 w-12 ml-1" />
+                <Skeleton className="h-9 w-full rounded-md" />{" "}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-28 opacity-70" />
+          <div className="w-full grid grid-cols-3 gap-1 bg-muted/20 p-1 rounded-lg">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-9 w-full rounded-md" />
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <div className="flex-1 h-full overflow-y-auto bg-muted/5 p-8 relative">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <Card className="border-border/40 bg-card shadow-xl rounded-xl overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-muted/10 h-14">
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+            <CardContent className="h-112.5 p-6 flex items-end gap-4">
+              {[...Array(12)].map((_, i) => (
+                <Skeleton
+                  key={i.toString()}
+                  className="w-full bg-primary/10"
+                  style={{ height: `${Math.random() * 60 + 20}%` }}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card className="border-border/40 bg-card shadow-xl rounded-xl">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-9 w-64 rounded-md" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-4 border-b border-border pb-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <Skeleton key={i} className="h-4 flex-1" />
+                ))}
+              </div>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex gap-4">
+                  {[1, 2, 3, 4].map((j) => (
+                    <Skeleton key={j} className="h-8 flex-1 opacity-50" />
+                  ))}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

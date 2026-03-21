@@ -7,41 +7,57 @@ import {
   TableRow,
 } from "~/components/ui/table";
 
-export function DataTable({ data }: { data: any[] }) {
+interface DataTableProps {
+  columns: string[];
+  data: Record<string, any>[];
+}
+
+export function DataTable({ columns, data }: DataTableProps) {
+  if (!columns?.length) {
+    return null;
+  }
+
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-border/50">
-          <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Product Name
-          </TableHead>
-          <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Category
-          </TableHead>
-          <TableHead className="text-xs font-semibold uppercase tracking-widest text-right text-muted-foreground">
-            Revenue
-          </TableHead>
+        <TableRow className="border-border/50 bg-muted/5">
+          {columns.map((col) => (
+            <TableHead
+              key={col}
+              className="text-xs font-semibold uppercase tracking-widest text-muted-foreground whitespace-nowrap"
+            >
+              {col}
+            </TableHead>
+          ))}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {data.map((item, idx) => (
-          <TableRow
-            key={idx.toString()}
-            className="border-border/40 hover:bg-muted/30 transition-colors"
-          >
-            <TableCell className="font-medium text-sm text-foreground">
-              {item.name}
-            </TableCell>
-            <TableCell>
-              <span className="px-2 py-0.5 rounded bg-muted text-[10px] font-bold text-muted-foreground uppercase">
-                {item.category}
-              </span>
-            </TableCell>
-            <TableCell className="text-right font-bold text-sm text-foreground">
-              ${item.revenue.toLocaleString()}
+        {data.length === 0 ? (
+          <TableRow>
+            <TableCell
+              colSpan={columns.length}
+              className="text-center py-8 text-muted-foreground"
+            >
+              No records found.
             </TableCell>
           </TableRow>
-        ))}
+        ) : (
+          data.map((row, idx) => (
+            <TableRow
+              key={row._id || idx.toString()}
+              className="border-border/40 hover:bg-muted/30 transition-colors"
+            >
+              {columns.map((col) => (
+                <TableCell
+                  key={col}
+                  className="font-medium text-sm text-foreground"
+                >
+                  {row[col] ?? "-"}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );
