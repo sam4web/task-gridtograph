@@ -1,8 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import {
+  AlertCircle,
+  ArrowRight,
+  FileQuestion,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
+import { DeleteRecordModal } from "~/components/delete-record-modal";
 import { RecordFormSidebar } from "~/components/record-form-sidebar";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
+import { Skeleton } from "~/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -11,184 +21,129 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { formatDate } from "~/lib/utils";
-
-const DUMMY_RECORDS = [
-  {
-    id: 1,
-    date: "2026-03-01",
-    product: "Pro Glow Headphones",
-    category: "Audio",
-    qty: 142,
-    revenue: "$14,200",
-  },
-  {
-    id: 2,
-    date: "2026-03-02",
-    product: "Smart Watch v2",
-    category: "Wearables",
-    qty: 89,
-    revenue: "$26,700",
-  },
-  {
-    id: 3,
-    date: "2026-03-03",
-    product: "UltraClean Air Purifier",
-    category: "Home",
-    qty: 56,
-    revenue: "$16,800",
-  },
-  {
-    id: 4,
-    date: "2026-03-04",
-    product: 'NovaPad Tablet 12"',
-    category: "Electronics",
-    qty: 203,
-    revenue: "$60,900",
-  },
-  {
-    id: 5,
-    date: "2026-03-05",
-    product: "ErgoFlex Standing Desk",
-    category: "Furniture",
-    qty: 34,
-    revenue: "$17,000",
-  },
-  {
-    id: 6,
-    date: "2026-03-06",
-    product: "CloudBuds Wireless",
-    category: "Audio",
-    qty: 178,
-    revenue: "$8,900",
-  },
-  {
-    id: 7,
-    date: "2026-03-07",
-    product: "Zen Diffuser Pro",
-    category: "Home",
-    qty: 67,
-    revenue: "$3,350",
-  },
-  {
-    id: 8,
-    date: "2026-03-08",
-    product: "FitBand Ultra",
-    category: "Wearables",
-    qty: 245,
-    revenue: "$24,500",
-  },
-  {
-    id: 9,
-    date: "2026-03-09",
-    product: "PowerDock 5-in-1",
-    category: "Electronics",
-    qty: 112,
-    revenue: "$5,600",
-  },
-  {
-    id: 10,
-    date: "2026-03-10",
-    product: "LumiDesk Lamp",
-    category: "Furniture",
-    qty: 91,
-    revenue: "$4,550",
-  },
-];
+import {
+  useAddRow,
+  useDeleteRow,
+  useGetDatasetById,
+  useUpdateRow,
+} from "~/hooks/use-dataset";
 
 export const Route = createFileRoute("/dashboard/editor/$fileId")({
   component: EditorRouteComponent,
 });
 
 function EditorRouteComponent() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<any>(null);
+  const { fileId } = useParams({ from: "/dashboard/editor/$fileId" });
 
-  const handleAdd = () => {
+  const { data: dataset, isLoading } = useGetDatasetById(fileId);
+  const addRow = useAddRow(fileId!);
+  const updateRow = useUpdateRow(fileId!);
+  const deleteRow = useDeleteRow(fileId!);
+
+  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<Record<
+    string,
+    any
+  > | null>(null);
+
+  if (isLoading) {
+    return <EditorTableSkeletonComponent />;
+  }
+
+  if (!dataset) {
+    return <DatasetNotFoundStateComponent />;
+  }
+
+  const handleOpenAdd = () => {
     setSelectedRecord(null);
     setIsSidebarOpen(true);
   };
 
-  const handleEdit = (record: any) => {
+  const handleOpenEdit = (record: Record<string, any>) => {
     setSelectedRecord(record);
     setIsSidebarOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget?._id) return;
+    deleteRow.mutate(deleteTarget._id, {
+      onSuccess: () => {
+        setDeleteTarget(null);
+      },
+    });
+  };
+
+  const handleFormSubmit = (formData: Record<string, any>) => {
+    console.log(selectedRecord);
+    if (selectedRecord?._id) {
+      updateRow.mutate({
+        rowId: selectedRecord._id,
+        data: formData,
+      });
+    } else {
+      addRow.mutate(formData);
+    }
   };
 
   return (
     <div className="w-full h-full space-y-6">
       <div className="flex items-center justify-between pb-2">
         <span className="text-sm font-medium text-muted-foreground">
-          {DUMMY_RECORDS.length} records
+          {dataset.data.length} records
         </span>
 
-        <Button onClick={handleAdd} className="cursor-pointer">
+        <Button onClick={handleOpenAdd} className="cursor-pointer">
           <Plus className="size-4" /> Add Record
         </Button>
       </div>
 
       <div className="border border-border/40 rounded-xl bg-card overflow-hidden shadow-sm">
-        <Table className="w-full" table-fixed>
+        <Table className="w-full">
           <TableHeader>
-            <TableRow className="border-border/40 hover:bg-transparent">
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-5">
-                Date
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-5">
-                Product
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-5">
-                Category
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-5">
-                Qty
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground px-5">
-                Revenue
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-widest text-muted-foreground text-right px-5">
+            <TableRow>
+              {dataset.columns.map((col) => (
+                <TableHead
+                  key={col}
+                  className="text-xs font-semibold capitalize tracking-widest text-muted-foreground text-left px-5"
+                >
+                  {col}
+                </TableHead>
+              ))}
+              <TableHead className="text-xs font-semibold capitalize tracking-widest text-muted-foreground text-center px-5 w-[10%]">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {DUMMY_RECORDS.map((record) => (
+            {dataset.data.map((row, idx) => (
               <TableRow
-                key={record.id}
+                key={idx.toString()}
                 className="border-border/20 hover:bg-muted/10 transition-colors"
               >
+                {dataset.columns.map((col) => (
+                  <TableCell key={col} className="px-5">
+                    {row[col] ?? "-"}
+                  </TableCell>
+                ))}
                 <TableCell className="text-sm text-muted-foreground font-medium px-5">
-                  {formatDate(record.date)}
-                </TableCell>
-                <TableCell className="text-sm text-foreground px-5">
-                  {record.product}
-                </TableCell>
-                <TableCell>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-primary/10 text-primary border border-primary/20">
-                    {record.category}
-                  </span>
-                </TableCell>
-                <TableCell className="text-sm text-foreground font-medium px-5">
-                  {record.qty}
-                </TableCell>
-                <TableCell className="text-sm text-foreground font-medium px-5">
-                  {record.revenue}
-                </TableCell>
-                <TableCell className="text-right px-5">
-                  <div className="flex items-center justify-end gap-1">
+                  <div className="flex items-center justify-end gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                      onClick={() => handleEdit(record)}
+                      className="size-8 text-muted-foreground hover:text-foreground cursor-pointer"
+                      onClick={() => handleOpenEdit(row)}
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="size-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      className="size-8 text-muted-foreground hover:text-destructive cursor-pointer"
+                      onClick={() => setDeleteTarget(row)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="size-4" />
                     </Button>
                   </div>
                 </TableCell>
@@ -201,8 +156,104 @@ function EditorRouteComponent() {
       <RecordFormSidebar
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        editData={selectedRecord}
+        columns={dataset.columns}
+        initialData={selectedRecord}
+        onSubmit={handleFormSubmit}
+        isSubmitting={addRow.isPending || updateRow.isPending}
       />
+
+      <DeleteRecordModal
+        isOpen={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+        isPending={deleteRow.isPending}
+      />
+    </div>
+  );
+}
+
+function EditorTableSkeletonComponent() {
+  const skeletonRows = Array.from({ length: 8 });
+  const skeletonCols = Array.from({ length: 5 });
+
+  return (
+    <div className="w-full h-full space-y-6 animate-in fade-in duration-500">
+      <div className="flex items-center justify-between pb-2">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-10 w-32 rounded-md" />
+      </div>
+      <div className="border border-border/40 rounded-xl bg-card overflow-hidden shadow-sm">
+        <Table className="w-full">
+          <TableHeader>
+            <TableRow>
+              {skeletonCols.map((_, i) => (
+                <TableHead key={i} className="px-5">
+                  <Skeleton className="h-3 w-20" />
+                </TableHead>
+              ))}
+              <TableHead className="w-[10%] px-5">
+                <div className="flex justify-center">
+                  <Skeleton className="h-3 w-12" />
+                </div>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {skeletonRows.map((_, rowIndex) => (
+              <TableRow key={rowIndex.toString()} className="border-border/20">
+                {skeletonCols.map((_, colIndex) => (
+                  <TableCell key={colIndex.toString()} className="px-5 py-4">
+                    <Skeleton className="h-4 w-full max-w-30" />
+                  </TableCell>
+                ))}
+                <TableCell className="px-5">
+                  <div className="flex items-center justify-end gap-2">
+                    <Skeleton className="size-8 rounded-md" />
+                    <Skeleton className="size-8 rounded-md" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+function DatasetNotFoundStateComponent() {
+  return (
+    <div className="flex flex-col items-center justify-center pt-20 space-y-6 px-4">
+      <div className="mb-4 p-5 rounded-full bg-muted/80 text-muted-foreground">
+        <FileQuestion className="size-10" />
+      </div>
+
+      <div className="flex flex-col items-center justify-center px-4">
+        <Alert
+          variant="destructive"
+          className="max-w-md bg-destructive/5 border-destructive/20"
+        >
+          <AlertTitle className="text-base font-medium flex items-center gap-2">
+            <AlertCircle className="size-5" />
+            Dataset Not Found
+          </AlertTitle>
+          <AlertDescription className="mt-2 text-sm">
+            The dataset you are looking for might have been deleted, or the URL
+            is incorrect. Please check your library and try again.
+          </AlertDescription>
+        </Alert>
+      </div>
+
+      <Button
+        variant="outline"
+        asChild
+        className="gap-1 cursor-pointer transition-all"
+      >
+        <Link to="/dashboard/library">
+          Return to Library
+          <ArrowRight className="size-4" />
+        </Link>
+      </Button>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground mr-1">
                   <ChartColumnBig className="size-5!" />
                 </div>
-                <span className="font-semibold text-lg font-mono">
+                <span className="font-medium text-base font-mono">
                   Grid To Graph
                 </span>
               </Link>

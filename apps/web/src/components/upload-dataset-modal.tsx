@@ -45,9 +45,9 @@ export function UploadDatasetsModal({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-150 p-0 overflow-hidden border-none shadow-2xl">
         <div className="p-8 space-y-6 bg-background">
-          <DialogHeader className="space-y-1">
+          <DialogHeader>
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-2xl font-bold tracking-tight text-foreground">
+              <DialogTitle className="text-xl font-bold tracking-tight text-foreground">
                 Upload Dataset
               </DialogTitle>
             </div>
@@ -160,7 +160,11 @@ export function UploadDatasetsModal({
 
             <div className="max-w-50 flex items-center gap-2 ml-auto">
               <DialogClose asChild>
-                <Button type="button" variant={"outline"} className="flex-1">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="flex-1 cursor-pointer"
+                >
                   Cancel
                 </Button>
               </DialogClose>
@@ -171,7 +175,7 @@ export function UploadDatasetsModal({
                   <Button
                     type="submit"
                     disabled={!canSubmit || !form.getFieldValue("dataset")}
-                    className="flex-1"
+                    className="flex-1 cursor-pointer"
                   >
                     {isSubmitting ? (
                       <Loader2 className="h-4 w-4 animate-spin" />

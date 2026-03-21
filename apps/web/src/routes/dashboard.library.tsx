@@ -49,6 +49,7 @@ function LibraryRouteComponent() {
       </div>
     );
   }
+
   if (isError) {
     return <DatasetErrorStateComponent onRetry={() => refetch()} />;
   }
@@ -79,7 +80,7 @@ function LibraryRouteComponent() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-start">
         {datasets?.map((dataset) => (
           <Card
-            key={dataset._id}
+            key={dataset._id.toString()}
             className="group hover:border-slate-400 shadow-sm transition-all"
           >
             <CardContent className="px-4">
@@ -100,17 +101,19 @@ function LibraryRouteComponent() {
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       className="cursor-pointer"
-                      onClick={() => handleViewData(dataset._id)}
+                      onClick={() => handleViewData(dataset._id.toString())}
                     >
                       View Data
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       className="text-destructive focus:bg-destructive focus:text-destructive-foreground cursor-pointer transition-colors"
-                      onClick={() => deleteMutation.mutate(dataset._id)}
+                      onClick={() =>
+                        deleteMutation.mutate(dataset._id.toString())
+                      }
                       disabled={deleteMutation.isPending}
                     >
                       {deleteMutation.isPending &&
-                      deleteMutation.variables === dataset._id
+                      deleteMutation.variables === dataset._id.toString()
                         ? "Deleting..."
                         : "Delete"}
                     </DropdownMenuItem>
@@ -201,18 +204,19 @@ function DatasetErrorStateComponent({ onRetry }: { onRetry: () => void }) {
           We couldn't retrieve your datasets. This might be due to a network
           issue or an expired session.
         </AlertDescription>
-        <div className="mt-4.5">
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={onRetry}
-            className="border-destructive/30 hover:bg-destructive/10"
-          >
-            <RefreshCw className="mr-2 h-3.5 w-3.5" />
-            Try Again
-          </Button>
-        </div>
       </Alert>
+
+      <div className="mt-4.5">
+        <Button
+          variant="destructive"
+          size="sm"
+          onClick={onRetry}
+          className="border-destructive/30 hover:bg-destructive/10"
+        >
+          Try Again
+          <RefreshCw className="mr-2 h-3.5 w-3.5" />
+        </Button>
+      </div>
     </div>
   );
 }
