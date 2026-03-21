@@ -1,5 +1,6 @@
 import { DatabaseError } from "@repo/database/error";
 import type { IDataset } from "@repo/database/mongo";
+import { Types } from "@repo/database/mongo";
 import { datasetRepository } from "@repo/database/repositories";
 import type { UploadedFile } from "express-fileupload";
 import * as xlsx from "xlsx";
@@ -22,18 +23,15 @@ export class DatasetService {
       const sheetName = workbook.SheetNames[0];
       if (!sheetName) {
         throw ApiError.badRequest(
-          "The uploaded Excel file appears to be empty (no sheets found).",
+          "The uploaded Excel file appears to be empty.",
         );
       }
-
       const worksheet = workbook.Sheets[sheetName];
       if (!worksheet) {
-        throw ApiError.badRequest(
-          "Could not read the first worksheet from the file.",
-        );
+        throw ApiError.badRequest("Could not read the first worksheet.");
       }
-
       const rawData = xlsx.utils.sheet_to_json<Record<string, any>>(worksheet);
+
       let columns: string[] = [];
       if (rawData.length > 0) {
         const firstRow = rawData[0];
@@ -41,12 +39,19 @@ export class DatasetService {
           columns = Object.keys(firstRow);
         }
       }
+
+      const dataWithIds = rawData.map((row) => ({
+        _id: new Types.ObjectId().toString(),
+        ...row,
+      }));
+
       const datasetPayload = {
         userId,
         fileName: file.name,
         columns,
-        data: rawData,
+        data: dataWithIds,
       };
+
       return await datasetRepository.create(datasetPayload);
     } catch (error) {
       console.error("ROOT CAUSE:", error);
@@ -81,19 +86,6 @@ export class DatasetService {
     return this.getDatasetAndVerifyOwnership(fileId, userId);
   }
 
-  public async addRows(
-    userId: string,
-    fileId: string,
-    newRows: Record<string, any>[],
-  ): Promise<IDataset> {
-    await this.getDatasetAndVerifyOwnership(fileId, userId);
-    const updatedDataset = await datasetRepository.addRows(fileId, newRows);
-    if (!updatedDataset) {
-      throw ApiError.notFound("Dataset not found after update.");
-    }
-    return updatedDataset;
-  }
-
   public async updateMetadata(
     userId: string,
     fileId: string,
@@ -117,16 +109,35 @@ export class DatasetService {
     await datasetRepository.deleteById(fileId);
   }
 
+  public async addRows(
+    userId: string,
+    fileId: string,
+    newRows: Record<string, any>[],
+  ): Promise<IDataset> {
+    await this.getDatasetAndVerifyOwnership(fileId, userId);
+
+    const rowsWithIds = newRows.map((row) => ({
+      _id: new Types.ObjectId().toString(),
+      ...row,
+    }));
+
+    const updatedDataset = await datasetRepository.addRows(fileId, rowsWithIds);
+    if (!updatedDataset) {
+      throw ApiError.notFound("Dataset not found after update.");
+    }
+    return updatedDataset;
+  }
+
   public async updateRow(
     userId: string,
     fileId: string,
-    rowIndex: number,
+    rowId: string,
     rowData: Record<string, any>,
   ): Promise<IDataset> {
     await this.getDatasetAndVerifyOwnership(fileId, userId);
     const updatedDataset = await datasetRepository.updateRow(
       fileId,
-      rowIndex,
+      rowId,
       rowData,
     );
     if (!updatedDataset) {
@@ -138,10 +149,10 @@ export class DatasetService {
   public async deleteRow(
     userId: string,
     fileId: string,
-    rowIndex: number,
+    rowId: string,
   ): Promise<IDataset> {
     await this.getDatasetAndVerifyOwnership(fileId, userId);
-    const updatedDataset = await datasetRepository.deleteRow(fileId, rowIndex);
+    const updatedDataset = await datasetRepository.deleteRow(fileId, rowId);
     if (!updatedDataset) {
       throw ApiError.notFound("Dataset not found after row deletion.");
     }

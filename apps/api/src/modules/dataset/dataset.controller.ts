@@ -134,17 +134,14 @@ class DatasetController {
         rowId: string;
       };
       const rowData = req.validatedBody as Record<string, any>;
-      const rowIndex = parseInt(rowId, 10);
 
-      if (isNaN(rowIndex)) {
-        throw ApiError.badRequest("Row ID must be a valid numeric index.");
-      }
       const dataset = await datasetService.updateRow(
         req.userId!,
         fileId,
-        rowIndex,
+        rowId,
         rowData,
       );
+
       return res
         .status(HTTP_STATUS.OK)
         .json(
@@ -162,15 +159,12 @@ class DatasetController {
         rowId: string;
       };
 
-      const rowIndex = parseInt(rowId, 10);
-      if (isNaN(rowIndex)) {
-        throw ApiError.badRequest("Row ID must be a valid numeric index.");
-      }
       const dataset = await datasetService.deleteRow(
         req.userId!,
         fileId,
-        rowIndex,
+        rowId,
       );
+
       return res
         .status(HTTP_STATUS.OK)
         .json(

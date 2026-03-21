@@ -17,10 +17,10 @@ export interface IDatasetRepository {
   deleteById(fileId: string): Promise<boolean>;
   updateRow(
     fileId: string,
-    rowIndex: number,
+    rowId: string,
     rowData: Record<string, any>,
-  ): Promise<IDataset | null>;
-  deleteRow(fileId: string, rowIndex: number): Promise<IDataset | null>;
+  ): Promise<IDataset>;
+  deleteRow(fileId: string, rowId: string): Promise<IDataset>;
 }
 
 export class DatasetRepository implements IDatasetRepository {
@@ -71,13 +71,56 @@ export class DatasetRepository implements IDatasetRepository {
           { new: true },
         )
         .exec();
+      if (!updated) throw new RecordNotFoundError("Dataset", fileId);
+      return updated;
+    } catch (error) {
+      if (error instanceof RecordNotFoundError) throw error;
+      throw new DatabaseError("Failed to append rows to dataset.", error);
+    }
+  }
+
+  async updateRow(
+    fileId: string,
+    rowId: string,
+    rowData: Record<string, any>,
+  ): Promise<IDataset> {
+    try {
+      const safeData = { ...rowData, _id: rowId };
+      const updated = await this.model
+        .findOneAndUpdate(
+          { _id: fileId, "data._id": rowId },
+          { $set: { "data.$": safeData } },
+          { new: true },
+        )
+        .exec();
+
+      if (!updated) {
+        throw new RecordNotFoundError("Dataset or Row", fileId);
+      }
+      return updated;
+    } catch (error) {
+      if (error instanceof RecordNotFoundError) throw error;
+      throw new DatabaseError(`Failed to update row with ID ${rowId}.`, error);
+    }
+  }
+
+  async deleteRow(fileId: string, rowId: string): Promise<IDataset> {
+    try {
+      const updated = await this.model
+        .findByIdAndUpdate(
+          fileId,
+          { $pull: { data: { _id: rowId } } },
+          { new: true },
+        )
+        .exec();
+
       if (!updated) {
         throw new RecordNotFoundError("Dataset", fileId);
       }
       return updated;
     } catch (error) {
       if (error instanceof RecordNotFoundError) throw error;
-      throw new DatabaseError("Failed to append rows to dataset.", error);
+      throw new DatabaseError(`Failed to delete row with ID ${rowId}.`, error);
     }
   }
 
@@ -109,58 +152,6 @@ export class DatasetRepository implements IDatasetRepository {
     } catch (error) {
       if (error instanceof RecordNotFoundError) throw error;
       throw new DatabaseError("Failed to delete dataset.", error);
-    }
-  }
-
-  async updateRow(
-    fileId: string,
-    rowIndex: number,
-    rowData: Record<string, any>,
-  ): Promise<IDataset> {
-    try {
-      const updateKey = `data.${rowIndex}`;
-      const updated = await this.model
-        .findByIdAndUpdate(
-          fileId,
-          { $set: { [updateKey]: rowData } },
-          { new: true },
-        )
-        .exec();
-      if (!updated) {
-        throw new RecordNotFoundError("Dataset", fileId);
-      }
-      return updated;
-    } catch (error) {
-      if (error instanceof RecordNotFoundError) throw error;
-      throw new DatabaseError(
-        `Failed to update row at index ${rowIndex}.`,
-        error,
-      );
-    }
-  }
-
-  async deleteRow(fileId: string, rowIndex: number): Promise<IDataset> {
-    try {
-      const unsetKey = `data.${rowIndex}`;
-      // unset the element at index
-      const unset = await this.model
-        .findByIdAndUpdate(fileId, { $set: { [unsetKey]: null } })
-        .exec();
-      if (!unset) {
-        throw new RecordNotFoundError("Dataset", fileId);
-      }
-      // pull null to collapse the array
-      const final = await this.model
-        .findByIdAndUpdate(fileId, { $pull: { data: null } }, { new: true })
-        .exec();
-
-      return final as IDataset;
-    } catch (error) {
-      if (error instanceof RecordNotFoundError) throw error;
-      throw new DatabaseError(
-        `Failed to delete row at index ${rowIndex}.`,
-        error,
-      );
     }
   }
 }
