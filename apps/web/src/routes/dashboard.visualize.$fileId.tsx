@@ -5,19 +5,22 @@ import {
   BarChart3,
   LayoutGrid,
   LineChartIcon,
-  Loader2,
   PieChartIcon,
   RefreshCw,
-  Search,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChartComponent } from "~/components/bar-chart";
 import { DataTable } from "~/components/data-table";
 import { DatasetErrorState } from "~/components/dataset-error-state";
 import { LineChartComponent } from "~/components/line-cart";
 import { PieChartComponent } from "~/components/pie-chart";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "~/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -45,27 +48,40 @@ function VisualizeRouteComponent() {
   const [chartType, setChartType] = useState("bar");
   const [xAxis, setXAxis] = useState("");
   const [yAxis, setYAxis] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (dataset?.columns?.length) {
-      if (!xAxis) setXAxis(dataset.columns[0]!);
-      if (!yAxis) setYAxis(dataset.columns[1]! || dataset.columns[0]!);
+    if (!dataset?._id || !dataset?.columns || dataset.columns.length === 0) {
+      return;
     }
-  }, [dataset, xAxis, yAxis]);
+    const stored = localStorage.getItem(`visualize_axes_${dataset._id}`);
+    let initialX = "";
+    let initialY = "";
 
-  const filteredData = useMemo(() => {
-    if (!dataset?.data) return [];
-    if (!searchQuery) return dataset.data;
-    const lowerQuery = searchQuery.toLowerCase();
-    return dataset.data.filter((row) =>
-      dataset.columns.some((col) =>
-        String(row[col] ?? "")
-          .toLowerCase()
-          .includes(lowerQuery),
-      ),
-    );
-  }, [dataset, searchQuery]);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (dataset.columns.includes(parsed.x)) initialX = parsed.x;
+        if (dataset.columns.includes(parsed.y)) initialY = parsed.y;
+      } catch (e) {
+        console.error("Failed to parse stored axes", e);
+      }
+    }
+
+    const fallbackX = dataset.columns[0] ?? "";
+    const fallbackY = dataset.columns[1] ?? fallbackX;
+
+    setXAxis(initialX || fallbackX);
+    setYAxis(initialY || fallbackY);
+  }, [dataset?._id, dataset?.columns]);
+
+  useEffect(() => {
+    if (dataset?._id && xAxis && yAxis) {
+      localStorage.setItem(
+        `visualize_axes_${dataset._id}`,
+        JSON.stringify({ x: xAxis, y: yAxis }),
+      );
+    }
+  }, [dataset?._id, xAxis, yAxis]);
 
   if (isLoading) {
     return <VisualizeSkeletonComponent />;
@@ -196,29 +212,29 @@ function VisualizeRouteComponent() {
         <div className="max-w-5xl mx-auto space-y-8">
           <Card className="border-border/40 bg-card shadow-xl rounded-xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-muted/10">
-              <CardTitle className="text-sm font-medium tracking-tight text-foreground/90 px-1">
-                Visualizing {yAxis} by{" "}
-                {xAxis === "name" ? "Product" : "Category"}
+              <CardTitle className="text-base font-medium tracking-tight text-foreground/90 px-1">
+                Visualizing <span className="font-semibold">{yAxis}</span> by{" "}
+                <span className="font-semibold">{xAxis}</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="h-112.5 p-2">
               {chartType === "bar" && (
                 <BarChartComponent
-                  data={filteredData}
+                  data={dataset.data}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
               )}
               {chartType === "line" && (
                 <LineChartComponent
-                  data={filteredData}
+                  data={dataset.data}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
               )}
               {chartType === "pie" && (
                 <PieChartComponent
-                  data={filteredData}
+                  data={dataset.data}
                   xAxis={xAxis}
                   yAxis={yAxis}
                 />
@@ -227,20 +243,18 @@ function VisualizeRouteComponent() {
           </Card>
 
           <Card className="border-border/40 bg-card shadow-xl rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-sm font-medium tracking-tight text-foreground/90 px-1">
-                Raw Records
-              </CardTitle>
-              <div className="relative w-64">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search..."
-                  className="pl-9 h-9 bg-background/50 border-border/50 text-foreground"
-                />
+            <CardHeader>
+              <div className="px-1 space-y-0.5">
+                <CardTitle className="text-base font-medium tracking-tight text-foreground/90">
+                  Records data table
+                </CardTitle>
+                <CardDescription className="text-sm font-semibold">
+                  {dataset.columns.length} Records
+                </CardDescription>
               </div>
             </CardHeader>
             <CardContent>
-              <DataTable columns={dataset.columns} data={filteredData} />
+              <DataTable columns={dataset.columns} data={dataset.data} />
             </CardContent>
           </Card>
         </div>
