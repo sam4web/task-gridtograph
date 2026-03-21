@@ -37,7 +37,7 @@ export function DataTable({ data }: { data: any[] }) {
                 {item.category}
               </span>
             </TableCell>
-            <TableCell className="text-right font-mono font-bold text-sm text-foreground">
+            <TableCell className="text-right font-bold text-sm text-foreground">
               ${item.revenue.toLocaleString()}
             </TableCell>
           </TableRow>

@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { formatDate } from "~/lib/utils";
 
 const DUMMY_RECORDS = [
   {
@@ -156,7 +157,7 @@ function EditorRouteComponent() {
                 className="border-border/20 hover:bg-muted/10 transition-colors"
               >
                 <TableCell className="text-sm text-muted-foreground font-medium px-5">
-                  {record.date}
+                  {formatDate(record.date)}
                 </TableCell>
                 <TableCell className="text-sm text-foreground px-5">
                   {record.product}

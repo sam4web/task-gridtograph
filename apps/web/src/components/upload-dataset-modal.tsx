@@ -114,7 +114,7 @@ export function UploadDatasetsModal({
                         </span>{" "}
                         your files
                       </p>
-                      <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-medium font-mono">
+                      <p className="text-xs text-muted-foreground mt-2 uppercase tracking-widest font-medium">
                         {FILE_UPLOAD_CONSTANTS.MAX_SIZE_MB}MB Limit
                       </p>
                     </button>
@@ -127,7 +127,7 @@ export function UploadDatasetsModal({
                         <p className="text-base font-semibold truncate text-foreground mb-1">
                           {field.state.value.name}
                         </p>
-                        <p className="text-xs font-medium text-muted-foreground font-mono">
+                        <p className="text-xs font-medium text-muted-foreground">
                           {(field.state.value.size / (1024 * 1024)).toFixed(2)}{" "}
                           MB
                         </p>

@@ -46,7 +46,7 @@ export function BarChartComponent({
         <Tooltip
           cursor={{
             fill: "currentColor",
-            className: "text-primary-foreground opacity-5",
+            className: "text-primary-foreground opacity-2.5",
           }}
           contentStyle={{
             backgroundColor: "var(--card)",

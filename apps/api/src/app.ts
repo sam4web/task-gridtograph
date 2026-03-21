@@ -47,7 +47,7 @@ app.get("/health", (req: Request, res: Response) => {
 
 // register module routes
 app.use("/api/auth", authRouter);
-app.use("/api/dataset", datasetRouter);
+app.use("/api/datasets", datasetRouter);
 
 //  --- ERROR HANDLING ---
 // catch-all for undefined routes (404 Not Found)
