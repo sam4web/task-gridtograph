@@ -1,5 +1,3 @@
-export const API_TIMEOUT_MS = 30000;
-
 export const FILE_UPLOAD_CONSTANTS = {
   MAX_SIZE_MB: 10,
   get MAX_SIZE_BYTES() {

@@ -10,10 +10,9 @@
 | Phase | Status | Key Milestones |
 | :--- | :--- | :--- |
 | **Phase 1: Architecture** | Completed | Turborepo setup, Biome, TypeScript configs |
-| **Phase 2: Authentication** | Completed | Admin Login system, JWT, Postgres integration |
-| **Phase 3: Data Management** | Completed | Excel (.xlsx) Parser, MongoDB Sales Schema, CRUD APIs |
-| **Phase 4: Sales Dashboard** | In Progress | Product Table, Bar Chart (Qty), Pie Chart (Revenue) |
-| **Phase 5: Dynamic Sync** | Pending | Real-time Chart updates on CRUD operations |
+| **Phase 2: Authentication** | Completed | Login system, JWT, Postgres integration |
+| **Phase 3: Data Management** | Completed | Excel (.xlsx) Parser, MongoDB Dataset Schema, CRUD APIs |
+| **Phase 4: Sales Dashboard** | Completed | Product Table, Data Visualization, Data CRUD Functionality |
 
 ---
 
@@ -23,7 +22,7 @@
 **Focus:** Architecture and cross-package synchronization.
 
 **Tasks Completed**
-* **Monorepo:** Created **Turborepo** for `web` and `api` using **pnpm catalogs**.
+* **Monorepo:** Created **Turborepo** for `web` and `api`, setup **pnpm catalogs**.
 * **Tooling:** Set up **Biome** for linting and **Vite + React** for the frontend.
 * **Validation:** Built a shared **validators** package with a Zod-based `enforceEnv` utility.
 * **Backend:** Initialized Node.js server with strict `.env` and **CORS** validation.
@@ -38,7 +37,7 @@
 **Focus:** Data layer, error handling, and observability.
 
 **Tasks Completed**
-* **Database:** Set up **PostgreSQL** with **Drizzle ORM**; defined `users` and `otp` schemas.
+* **Database:** Set up **PostgreSQL** with **Drizzle ORM**; defined `users` schema.
 * **Security & Constants:** Integrated a **Rate Limiter** and a shared package for global constants.
 * **Observability:** Combined **Morgan** and **Winston** for structured request/app logging.
 * **Error Handling:** Built a global `ApiError` class and middleware for uniform JSON responses.
@@ -46,7 +45,7 @@
 **Insights**
 * **Strategy:** Chose **Drizzle ORM** for its "TypeScript-first" safety and low runtime overhead.
 * **Impact:** Centralized logging and error handling provide predictable API failures and faster debugging.
-* 
+
 ---
 
 ### [2026-05-17] | Day 3: Authentication System
@@ -87,7 +86,54 @@
 * **API & CRUD:** Developed the **Dataset** controller, routes, and services for full data management.
 
 **Insights**
-* **Strategy:** Using MongoDB for sales data provides the flexible document structure needed for dynamic product attributes.
-* **Impact:** Dedicated file middleware ensures only valid `.xlsx` data reaches the processing layer, preventing database corruption.
+* **Strategy:** Using MongoDB dataset provides the flexible document structure needed for dynamic product attributes.
+* **Impact:** Dedicated file middleware ensures only valid excel file data reaches the processing layer, preventing database corruption.
 
 ---
+
+### [2026-05-21] | Day 6: Dashboard UI & Data Visualization
+**Focus:** Frontend implementation for data management and analytics.
+
+**Tasks Completed**
+* **UI Development:** Built the **Dashboard**, **File Upload** component, **Editor** page, and a **Home** page.
+* **Data Visualization:** Integrated **Recharts** to create dynamic visualizers on the Analytics page.
+* **Core Features:** Implemented Excel file uploading and connected the **Library** to fetch and display datasets.
+* **Data Management:** Added full **Row-level CRUD** functionality in the Editor for manual data manipulation.
+* **API Refinement:** Fixed dataset row validation and manipulation logic on the backend.
+
+**Insights**
+* **Strategy:** Using **Recharts** allows for a decoupled visualization layer that scales easily with different dataset types.
+
+---
+
+## Architectural Decision Records (ADR)
+
+### ADR 001: Monorepo with Turborepo
+* **Context:** Managing separate builds and repositories for the web and API is slow, repetitive, and fragmented.
+* **Decision:** I moved everything into a **single repository** (Monorepo) and used **Turborepo** to manage and run all project tasks.
+* **Consequences:** 
+    * **Smart Caching:** It remembers what was already built and skips unchanged code, making builds much faster.
+    * **Side-by-Side Running:** It can lint, build, and test the frontend and backend at the same time.
+    * **Stay in Sync:** All parts of the app grow together in one history, ensuring the API and Web never get out of step.
+    * **Easy Sharing:** I can share things like validation rules or types between the API and Web apps instantly without any extra setup.
+
+### ADR 002: Choosing TanStack Router
+* **Context:** Most routing tools don't tell you if a link or a URL setting is broken until you run the app.
+* **Decision:** I chose **TanStack Router** over React Router for the web app.
+* **Consequences:**
+    * **Fewer Bugs:** It catches broken links and typos while coding, not after deploying.
+    * **Pre-loading:** It fetches data before the page even shows up, making the app feel snappier.
+
+### ADR 003: Using both MongoDB and PostgreSQL
+* **Context:** The app needs to handle strict user accounts but also needs to store messy, varied Excel data.
+* **Decision:** I used **PostgreSQL** for Auth and **MongoDB** for Datasets.
+* **Consequences:**
+    * **Strict for Users:** PostgreSQL keeps user accounts and sessions safe and organized.
+    * **Flexible for Data:** MongoDB saves "Dataset" records even if the columns change, without breaking the database.
+    
+---
+
+## Future Improvements
+- [ ] **RBAC:** Add Role-Based Access Control to restrict data deletion to "Admin" users only.
+- [ ] **Data Export:** Allow users to download the filtered table data back into an Excel file.
+- [ ] **Responsive Design:** Update the client to ensure the dashboard and data tables are fully usable on mobile and tablet screens.
