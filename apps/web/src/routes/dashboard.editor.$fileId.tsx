@@ -1,16 +1,9 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import {
-  AlertCircle,
-  ArrowRight,
-  FileQuestion,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { createFileRoute, useParams } from "@tanstack/react-router";
+import { ArrowRight, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { DatasetErrorState } from "~/components/dataset-error-state";
 import { DeleteRecordModal } from "~/components/delete-record-modal";
 import { RecordFormSidebar } from "~/components/record-form-sidebar";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Skeleton } from "~/components/ui/skeleton";
 import {
@@ -35,7 +28,12 @@ export const Route = createFileRoute("/dashboard/editor/$fileId")({
 function EditorRouteComponent() {
   const { fileId } = useParams({ from: "/dashboard/editor/$fileId" });
 
-  const { data: dataset, isLoading } = useGetDatasetById(fileId);
+  const {
+    data: dataset,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetDatasetById(fileId);
   const addRow = useAddRow(fileId!);
   const updateRow = useUpdateRow(fileId!);
   const deleteRow = useDeleteRow(fileId!);
@@ -51,8 +49,34 @@ function EditorRouteComponent() {
     return <EditorTableSkeletonComponent />;
   }
 
+  if (isError) {
+    return (
+      <DatasetErrorState
+        title="Failed to load editor"
+        description="An error occurred while fetching the dataset records. Please check your connection and try again."
+        action={{
+          type: "button",
+          label: "Retry Loading",
+          onClick: () => refetch(),
+          icon: RefreshCw,
+        }}
+      />
+    );
+  }
+
   if (!dataset) {
-    return <DatasetNotFoundStateComponent />;
+    return (
+      <DatasetErrorState
+        title="Dataset Not Found"
+        description="The dataset you're trying to edit doesn't exist or may have been moved."
+        action={{
+          type: "link",
+          label: "Return to Library",
+          to: "/dashboard/library",
+          icon: ArrowRight,
+        }}
+      />
+    );
   }
 
   const handleOpenAdd = () => {
@@ -217,43 +241,6 @@ function EditorTableSkeletonComponent() {
           </TableBody>
         </Table>
       </div>
-    </div>
-  );
-}
-
-function DatasetNotFoundStateComponent() {
-  return (
-    <div className="flex flex-col items-center justify-center pt-20 space-y-6 px-4">
-      <div className="mb-4 p-5 rounded-full bg-muted/80 text-muted-foreground">
-        <FileQuestion className="size-10" />
-      </div>
-
-      <div className="flex flex-col items-center justify-center px-4">
-        <Alert
-          variant="destructive"
-          className="max-w-md bg-destructive/5 border-destructive/20"
-        >
-          <AlertTitle className="text-base font-medium flex items-center gap-2">
-            <AlertCircle className="size-5" />
-            Dataset Not Found
-          </AlertTitle>
-          <AlertDescription className="mt-2 text-sm">
-            The dataset you are looking for might have been deleted, or the URL
-            is incorrect. Please check your library and try again.
-          </AlertDescription>
-        </Alert>
-      </div>
-
-      <Button
-        variant="outline"
-        asChild
-        className="gap-1 cursor-pointer transition-all"
-      >
-        <Link to="/dashboard/library">
-          Return to Library
-          <ArrowRight className="size-4" />
-        </Link>
-      </Button>
     </div>
   );
 }

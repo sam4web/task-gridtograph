@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
-  AlertCircle,
   CalendarDays,
   Columns,
   FileText,
@@ -8,7 +7,7 @@ import {
   Plus,
   RefreshCw,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { DatasetErrorState } from "~/components/dataset-error-state";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
 import {
@@ -51,7 +50,18 @@ function LibraryRouteComponent() {
   }
 
   if (isError) {
-    return <DatasetErrorStateComponent onRetry={() => refetch()} />;
+    return (
+      <DatasetErrorState
+        title="Failed to fetch data"
+        description="An error occurred while loading your datasets. Please check your connection and try again."
+        action={{
+          type: "button",
+          label: "Try Again",
+          onClick: () => refetch(),
+          icon: RefreshCw,
+        }}
+      />
+    );
   }
 
   return (
@@ -186,37 +196,5 @@ function DatasetCardSkeletonComponent() {
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-function DatasetErrorStateComponent({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="flex flex-col items-center justify-center pt-20 px-4">
-      <Alert
-        variant="destructive"
-        className="max-w-md bg-destructive/5 border-destructive/20"
-      >
-        <AlertTitle className="text-base font-medium flex items-center gap-2">
-          <AlertCircle className="size-5" />
-          Connection Error
-        </AlertTitle>
-        <AlertDescription className="mt-2 text-sm">
-          We couldn't retrieve your datasets. This might be due to a network
-          issue or an expired session.
-        </AlertDescription>
-      </Alert>
-
-      <div className="mt-4.5">
-        <Button
-          variant="destructive"
-          size="sm"
-          onClick={onRetry}
-          className="border-destructive/30 hover:bg-destructive/10"
-        >
-          Try Again
-          <RefreshCw className="mr-2 h-3.5 w-3.5" />
-        </Button>
-      </div>
-    </div>
   );
 }
