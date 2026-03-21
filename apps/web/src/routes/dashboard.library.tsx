@@ -96,7 +96,7 @@ function LibraryRouteComponent() {
         {dummyDatasets.map((file) => (
           <Card
             key={file._id}
-            className="group hover:border-slate-400 transition-colors shadow-sm"
+            className="group hover:border-slate-400 shadow-sm transition-all"
           >
             <CardContent className="px-4">
               <div className="flex justify-between items-start mb-4">

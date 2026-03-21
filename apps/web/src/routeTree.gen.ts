@@ -18,7 +18,9 @@ import { Route as DashboardLibraryRouteImport } from './routes/dashboard.library
 import { Route as DashboardDataTableRouteImport } from './routes/dashboard.data-table'
 import { Route as AuthRegisterRouteImport } from './routes/_auth.register'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
+import { Route as DashboardEditorIndexRouteImport } from './routes/dashboard.editor.index'
 import { Route as DashboardAnalyticsIndexRouteImport } from './routes/dashboard.analytics.index'
+import { Route as DashboardEditorFileIdRouteImport } from './routes/dashboard.editor.$fileId'
 import { Route as DashboardAnalyticsFileIdRouteImport } from './routes/dashboard.analytics.$fileId'
 
 const DashboardRoute = DashboardRouteImport.update({
@@ -65,9 +67,19 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const DashboardEditorIndexRoute = DashboardEditorIndexRouteImport.update({
+  id: '/editor/',
+  path: '/editor/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAnalyticsIndexRoute = DashboardAnalyticsIndexRouteImport.update({
   id: '/analytics/',
   path: '/analytics/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardEditorFileIdRoute = DashboardEditorFileIdRouteImport.update({
+  id: '/editor/$fileId',
+  path: '/editor/$fileId',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardAnalyticsFileIdRoute =
@@ -87,7 +99,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/analytics/$fileId': typeof DashboardAnalyticsFileIdRoute
+  '/dashboard/editor/$fileId': typeof DashboardEditorFileIdRoute
   '/dashboard/analytics/': typeof DashboardAnalyticsIndexRoute
+  '/dashboard/editor/': typeof DashboardEditorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,7 +112,9 @@ export interface FileRoutesByTo {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard': typeof DashboardIndexRoute
   '/dashboard/analytics/$fileId': typeof DashboardAnalyticsFileIdRoute
+  '/dashboard/editor/$fileId': typeof DashboardEditorFileIdRoute
   '/dashboard/analytics': typeof DashboardAnalyticsIndexRoute
+  '/dashboard/editor': typeof DashboardEditorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,7 +128,9 @@ export interface FileRoutesById {
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/dashboard/analytics/$fileId': typeof DashboardAnalyticsFileIdRoute
+  '/dashboard/editor/$fileId': typeof DashboardEditorFileIdRoute
   '/dashboard/analytics/': typeof DashboardAnalyticsIndexRoute
+  '/dashboard/editor/': typeof DashboardEditorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,7 +144,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/analytics/$fileId'
+    | '/dashboard/editor/$fileId'
     | '/dashboard/analytics/'
+    | '/dashboard/editor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -137,7 +157,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard'
     | '/dashboard/analytics/$fileId'
+    | '/dashboard/editor/$fileId'
     | '/dashboard/analytics'
+    | '/dashboard/editor'
   id:
     | '__root__'
     | '/'
@@ -150,7 +172,9 @@ export interface FileRouteTypes {
     | '/dashboard/settings'
     | '/dashboard/'
     | '/dashboard/analytics/$fileId'
+    | '/dashboard/editor/$fileId'
     | '/dashboard/analytics/'
+    | '/dashboard/editor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -224,11 +248,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/dashboard/editor/': {
+      id: '/dashboard/editor/'
+      path: '/editor'
+      fullPath: '/dashboard/editor/'
+      preLoaderRoute: typeof DashboardEditorIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/analytics/': {
       id: '/dashboard/analytics/'
       path: '/analytics'
       fullPath: '/dashboard/analytics/'
       preLoaderRoute: typeof DashboardAnalyticsIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/editor/$fileId': {
+      id: '/dashboard/editor/$fileId'
+      path: '/editor/$fileId'
+      fullPath: '/dashboard/editor/$fileId'
+      preLoaderRoute: typeof DashboardEditorFileIdRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/analytics/$fileId': {
@@ -259,7 +297,9 @@ interface DashboardRouteChildren {
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardAnalyticsFileIdRoute: typeof DashboardAnalyticsFileIdRoute
+  DashboardEditorFileIdRoute: typeof DashboardEditorFileIdRoute
   DashboardAnalyticsIndexRoute: typeof DashboardAnalyticsIndexRoute
+  DashboardEditorIndexRoute: typeof DashboardEditorIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
@@ -268,7 +308,9 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardIndexRoute: DashboardIndexRoute,
   DashboardAnalyticsFileIdRoute: DashboardAnalyticsFileIdRoute,
+  DashboardEditorFileIdRoute: DashboardEditorFileIdRoute,
   DashboardAnalyticsIndexRoute: DashboardAnalyticsIndexRoute,
+  DashboardEditorIndexRoute: DashboardEditorIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(

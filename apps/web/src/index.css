@@ -127,23 +127,6 @@
     @apply scroll-smooth;
   }
 
-  html,
-  body,
-  [class*="bg-"],
-  [class*="text-"],
-  [class*="border-"],
-  [class*="accent"] {
-    transition:
-      width var(--tw-transition-duration) ease-in-out,
-      background-color var(--tw-transition-duration) ease-in-out,
-      color var(--tw-transition-duration) ease-in-out,
-      border-color var(--tw-transition-duration) ease-in-out,
-      outline-color var(--tw-transition-duration) ease-in-out,
-      fill var(--tw-transition-duration) ease-in-out,
-      box-shadow var(--tw-transition-duration) ease-in-out,
-      backdrop-filter var(--tw-transition-duration) ease-in-out;
-  }
-
   body {
     @apply bg-background text-foreground overflow-x-hidden font-sans;
   }
