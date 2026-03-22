@@ -132,8 +132,3 @@
     * **Flexible for Data:** MongoDB saves "Dataset" records even if the columns change, without breaking the database.
     
 ---
-
-## Future Improvements
-- [ ] **RBAC:** Add Role-Based Access Control to restrict data deletion to "Admin" users only.
-- [ ] **Data Export:** Allow users to download the filtered table data back into an Excel file.
-- [ ] **Responsive Design:** Update the client to ensure the dashboard and data tables are fully usable on mobile and tablet screens.
