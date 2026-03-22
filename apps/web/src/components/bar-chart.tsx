@@ -41,7 +41,7 @@ export function BarChartComponent({
           className="text-muted-foreground text-xs"
           tickLine={false}
           axisLine={false}
-          tickFormatter={(val) => `$${val.toLocaleString()}`}
+          tickFormatter={(val) => val.toLocaleString()}
         />
         <Tooltip
           cursor={{

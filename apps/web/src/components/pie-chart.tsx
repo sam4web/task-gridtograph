@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 const PIE_COLORS = [
@@ -17,11 +18,18 @@ export function PieChartComponent({
   xAxis: string;
   yAxis: string;
 }) {
+  const chartData = useMemo(() => {
+    return data.map((item) => ({
+      ...item,
+      [yAxis]: parseFloat(item[yAxis]) || 0,
+    }));
+  }, [data, yAxis]);
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
         <Pie
-          data={data}
+          data={chartData}
           cx="50%"
           cy="50%"
           innerRadius={100}
