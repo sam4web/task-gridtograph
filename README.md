@@ -33,6 +33,8 @@ This project uses a dual-database architecture to satisfy strict user schemas wh
 
 PostgreSQL, interacted with via Drizzle ORM, handles structured user data and account management.
 
+**Database Table:** `users`
+
 | Column     | Type        | Constraints      | Default             |
 | ---------- | ----------- | ---------------- | ------------------- |
 | id         | `uuid`      | Primary Key      | `gen_random_uuid()` |
@@ -77,6 +79,8 @@ All cell values are stored as **strings** because the parser captures the **form
 34: raw: false,
 35: });
 ```
+
+**Database Collection:** `dataset`
 
 | Field     | Type       | Constraints       | Description                                  |
 | --------- | ---------- | ----------------- | -------------------------------------------- |
