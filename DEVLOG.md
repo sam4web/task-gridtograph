@@ -12,7 +12,7 @@
 | **Phase 1: Architecture** | Completed | Turborepo setup, Biome, TypeScript configs |
 | **Phase 2: Authentication** | Completed | Login system, JWT, Postgres integration |
 | **Phase 3: Data Management** | Completed | Excel (.xlsx) Parser, MongoDB Dataset Schema, CRUD APIs |
-| **Phase 4: Sales Dashboard** | Completed | Product Table, Data Visualization, Data CRUD Functionality |
+| **Phase 4: Datasheet Visualization** | Completed | Record Table, Data Visualization, Data CRUD Functionality |
 
 ---
 
