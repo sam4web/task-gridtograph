@@ -30,7 +30,9 @@ export class DatasetService {
       if (!worksheet) {
         throw ApiError.badRequest("Could not read the first worksheet.");
       }
-      const rawData = xlsx.utils.sheet_to_json<Record<string, any>>(worksheet);
+      const rawData = xlsx.utils.sheet_to_json<Record<string, any>>(worksheet, {
+        raw: false,
+      });
 
       let columns: string[] = [];
       if (rawData.length > 0) {
