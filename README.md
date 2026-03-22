@@ -21,7 +21,7 @@ The backend enforces a strict separation of concerns using a Controller-Service-
 
 2. **Controller**: Receives the validated request, handles the HTTP lifecycle, and manage the response.
 
-3. **Service**: Contains the core business logic and processing tasks (e.g., parsing uploaded `.xlsx` files using the `xlsx(SheetJS)` package located in [`/apps/api/src/modules/dataset/dataset.service.ts`](https://github.com/sam4web/task-gridtograph/blob/main/apps/api/src/modules/dataset/dataset.service.ts)).
+3. **Service**: Contains the core business logic and processing tasks (e.g., parsing uploaded .xlsx buffers).
 
 4. **Repository**: Invoked by the service layer to handle direct database access and manipulation.
 
@@ -46,6 +46,38 @@ PostgreSQL, interacted with via Drizzle ORM, handles structured user data and ac
 
 MongoDB, interacted with via Mongoose, stores the uploaded Excel data. Because spreadsheets lack a fixed schema, a NoSQL approach ensures the application can ingest and visualize highly variable datasets.
 
+**Row-Level Identifiers**
+
+The `data` field in the dataset collection does not inherently contain an `_id` property from the Excel file. An `_id` is manually assigned to every row during the parsing and mapping phase. This is critical for performing targeted **Update** and **Delete** operations on specific rows in the Editor.
+
+The implementation in `apps/api/src/modules/dataset/dataset.services.ts` follows this logic:
+
+```typescript
+// Line 45: Assigning unique IDs to rows for CRUD operations
+45: const dataWithIds = rawData.map((row) => ({
+46:   _id: new Types.ObjectId().toString(), // using mongoose.Types
+47:   ...row,
+48: }));
+49:
+50: const datasetPayload = {
+51:   userId,
+52:   fileName: file.name,
+53:   columns,
+54:   data: dataWithIds,
+55: };
+```
+
+**Data Type Consistency**
+
+All cell values are stored as **strings** because the parser captures the **formatted display text** from Excel. This ensures the data looks exactly like it does in the spreadsheet and avoids common rounding errors (floating-point precision issues) with numbers.
+
+```typescript
+// Line 33: Dataset parsing logic
+33: const rawData = xlsx.utils.sheet_to_json<Record<string, any>>(worksheet, {
+34: raw: false,
+35: });
+```
+
 | Field     | Type       | Constraints       | Description                                  |
 | --------- | ---------- | ----------------- | -------------------------------------------- |
 | \_id      | `ObjectId` | Primary Key       | MongoDB internal unique ID                   |
@@ -56,7 +88,7 @@ MongoDB, interacted with via Mongoose, stores the uploaded Excel data. Because s
 | createdAt | `date`     | Not Null          | Managed by Mongoose Timestamps               |
 | updatedAt | `date`     | Not Null          | Managed by Mongoose Timestamps               |
 
-_Example of an object within the `data` array representing a single spreadsheet row:_
+_Example of an object within the `data` array representing a single spreadsheet row_\
 
 ```json
 {
@@ -64,10 +96,12 @@ _Example of an object within the `data` array representing a single spreadsheet 
   "Product Name": "Laptop",
   "Category": "Electronics",
   "Quantity Sold": "45",
-  "Revenue": 120000,
-  "Sales Data": 45945
+  "Revenue": "120000",
+  "Sales Date": "2025-10-15"
 }
 ```
+
+_(All values stringified; unique `_id` generated per row)_
 
 ## Core Features & Workflows
 
@@ -159,13 +193,13 @@ This project heavily relies on **pnpm workspaces** and **pnpm catalogs**. Ensure
 
 ## Screenshots
 
+![Dataset Library](./screenshots/library.png)  
+_The dataset library where uploaded files are managed and viewed._
+
 ![Visualize Overview - Bar Chart](./screenshots/visualize-bar.png)  
 ![Visualize Overview - Pie Chart](./screenshots/visualize-pie.png)  
 ![Visualize Overview - Line Chart](./screenshots/visualize-line.png)  
 _Main visualize page showing the analytics overview and charts._
-
-![Dataset Library](./screenshots/library.png)  
-_The dataset library where uploaded files are managed and viewed._
 
 ![Data Editor](./screenshots/editor.png)  
 _The editor page for performing manual CRUD operations on specific data rows._
